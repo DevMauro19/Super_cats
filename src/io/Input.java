@@ -1,4 +1,6 @@
 package io;
 
-public class Input {
+public class Input{
+
 }
+

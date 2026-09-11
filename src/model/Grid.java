@@ -18,7 +18,7 @@ public final class Grid {
 
     //Constructor
     public Grid(int fila,int columna)throws ENumeroNegativo {
-        if(fila<=0 || columna <=0){throw new ENumeroNegativo("filas y columnas deben ser positivas");}
+        if(fila<0 || columna <0){throw new ENumeroNegativo("filas y columnas deben ser positivas");}
 
         this.fila=fila;
         this.columna=columna;
