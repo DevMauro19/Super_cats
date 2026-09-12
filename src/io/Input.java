@@ -163,6 +163,77 @@ public final class Input {
         }
     }
 
+    public static final String EJEMPLO_MISSION2 =
+            "3\n" +
+                    "2 1 0 1\n" +
+                    "0 1 100\n" +
+                    "3 3 2 0\n" +
+                    "0 1 100\n" +
+                    "0 2 200\n" +
+                    "1 2 50\n" +
+                    "2 0 0 1\n";
+
+    public static List<MisionDosCaso> leerMision2(String texto) throws EEntradaInvalida, ENumeroNegativo {
+        LectorTokens lector = new LectorTokens(texto);
+        int casos = lector.siguienteEntero("la cantidad de casos de prueba (T)");
+
+        if (casos < 0) {
+            throw new EEntradaInvalida("La cantidad de casos de prueba no puede ser negativa: " + casos);
+        }
+
+        List<MisionDosCaso> listaCasos = new ArrayList<>();
+
+        for (int caso = 1; caso <= casos; caso++) {
+            int nodos = lector.siguienteEntero("N (cantidad de nodos) del caso " + caso);
+            if (nodos < 1 || nodos > 10000) {
+                throw new EEntradaInvalida("N debe estar entre 1 y 10000 en el caso " + caso + ", se leyo: " + nodos);
+            }
+
+            int conexiones = lector.siguienteEntero("C (cantidad de conexiones) del caso " + caso);
+            if (conexiones < 0 || conexiones > 100000) {
+                throw new EEntradaInvalida("C debe estar entre 0 y 100000 en el caso " + caso + ", se leyo: " + conexiones);
+            }
+
+            int origen = lector.siguienteEntero("S (nodo origen) del caso " + caso);
+            int destino = lector.siguienteEntero("D (nodo destino) del caso " + caso);
+
+            validarNodoMision2(origen, nodos, "origen (S)", caso);
+            validarNodoMision2(destino, nodos, "destino (D)", caso);
+
+            Graph grafo = new Graph(nodos, false); // Grafo NO dirigido
+
+            for (int i = 1; i <= conexiones; i++) {
+                int desde = lector.siguienteEntero("el nodo A de la conexion " + i + " (caso " + caso + ")");
+                int hasta = lector.siguienteEntero("el nodo B de la conexion " + i + " (caso " + caso + ")");
+                long costo = lector.siguienteLargo("el costo W de la conexion " + i + " (caso " + caso + ")");
+
+                validarNodoMision2(desde, nodos, "de la conexion " + i, caso);
+                validarNodoMision2(hasta, nodos, "de la conexion " + i, caso);
+
+                if (costo < 0 || costo > 1000000) {
+                    throw new EEntradaInvalida("El costo W debe estar entre 0 y 1000000 en la conexion " + i);
+                }
+
+                // Los nodos ya estan en base 0 (0 a N-1), no se les resta nada
+                grafo.addEdge(desde, hasta, costo);
+            }
+
+            listaCasos.add(new MisionDosCaso(grafo, origen, destino));
+        }
+
+        if (lector.haySiguiente()) {
+            throw new EEntradaInvalida("Sobran datos despues del ultimo caso de prueba.");
+        }
+
+        return listaCasos;
+    }
+
+    private static void validarNodoMision2(int nodo, int totalNodos, String etiqueta, int caso) throws EEntradaInvalida {
+        if (nodo < 0 || nodo >= totalNodos) {
+            throw new EEntradaInvalida("El nodo " + etiqueta + " es " + nodo + ", pero debe estar entre 0 y " + (totalNodos - 1) + " (caso " + caso + ")");
+        }
+    }
+
     /*
         MISION 4 (Kruskal).
 

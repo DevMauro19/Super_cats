@@ -1,6 +1,7 @@
 package io;
 
 import algorithms.mission1.PathResult;
+import algorithms.mission2.DijkstraResult;
 
 /*
     Convierte los resultados de un algoritmo en la linea de texto exacta que
@@ -31,5 +32,12 @@ public final class Output {
             return "Case #" + numeroCaso + ": Nina is unreachable";
         }
         return "Case #" + numeroCaso + ": BFS " + bfs.getMoves() + " DFS " + dfs.getMoves();
+    }
+
+    public static String formatearMision2(int casoNum, DijkstraResult result) {
+        if (!result.isAlcanzable()) {
+            return "Case #" + casoNum + ": Nina is very sad";
+        }
+        return "Case #" + casoNum + ": " + result.getDistancia();
     }
 }
