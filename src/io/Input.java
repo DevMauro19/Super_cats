@@ -3,6 +3,8 @@ package io;
 import Exceptions.EEntradaInvalida;
 import Exceptions.ENumeroNegativo;
 import model.Graph;
+import model.Punto;
+import model.Grid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,23 @@ import java.util.List;
 */
 public final class Input {
 
+    // Entrada de ejemplo de la mision 1, tal cual aparece en el enunciado (seccion 3).
+    public static final String EJEMPLO_MISSION1 =
+            "10 10\n" +
+                    "9\n" +
+                    "0 1 2\n" +
+                    "1 1 2\n" +
+                    "2 2 2 9\n" +
+                    "3 2 1 7\n" +
+                    "5 3 3 6 9\n" +
+                    "6 4 0 1 2 7\n" +
+                    "7 3 0 3 8\n" +
+                    "8 2 7 9\n" +
+                    "9 3 2 3 4\n" +
+                    "0 0\n" +
+                    "9 9\n" +
+                    "0 0\n";
+
     // Entrada de ejemplo de la mision 4, tal cual aparece en el enunciado.
     // La usa el boton "load sample" que exige la seccion 7.1.
     public static final String EJEMPLO_MISSION4 =
@@ -35,6 +54,113 @@ public final class Input {
 
     // Clase de utilidades: no se instancia.
     private Input() {
+    }
+
+    /*
+       MISION 1 (BFS/DFS - Rescate de Nina).
+
+       Formato esperado por cada caso, repetido hasta encontrar R=0 y C=0:
+           R C
+           filasConBombas
+           (por cada fila con bombas: fila cantidadBombas col1 col2 ...)
+           filaInicio columnaInicio
+           filaDestino columnaDestino
+
+       El caso con R=0 y C=0 marca el fin de la entrada y NO se procesa
+       (seccion 3: "you must not process that test case").
+
+       Devuelve una lista de MisionUnoCaso, cada uno con su Grid ya armado
+       y los puntos de inicio/destino, listos para pasarle a BFS/DFS.
+
+       ENumeroNegativo puede propagarse desde el constructor de Grid si en
+       algun momento llegara un valor negativo hasta ahi; en la practica no
+       deberia pasar porque aqui mismo se valida el rango 1..1000 antes de
+       construir el Grid, pero se deja declarada por consistencia con
+       leerMission4 y como defensa adicional.
+   */
+    public static List<MisionUnoCaso> leerMision1(String texto) throws EEntradaInvalida, ENumeroNegativo {
+
+        LectorTokens lector = new LectorTokens(texto);
+        List<MisionUnoCaso> casos = new ArrayList<>();
+
+        while (true) {
+
+            int filas = lector.siguienteEntero("R (numero de filas) de un caso de prueba");
+            int columnas = lector.siguienteEntero("C (numero de columnas) de un caso de prueba");
+
+            // Sentinela de fin de entrada: no se procesa como caso real.
+            if (filas == 0 && columnas == 0) {
+                break;
+            }
+
+            // El enunciado exige 1 <= R,C <= 1000. Grid solo protege contra
+            // valores negativos (ENumeroNegativo); el limite superior y el
+            // cero son una regla del FORMATO de esta mision especifica, no
+            // un invariante del modelo Grid, asi que se valida aqui.
+            if (filas < 1 || filas > 1000 || columnas < 1 || columnas > 1000) {
+                throw new EEntradaInvalida("R y C deben estar entre 1 y 1000 (se leyo R="
+                        + filas + ", C=" + columnas + ")");
+            }
+
+            Grid grid = new Grid(filas, columnas);
+
+            int filasConBombas = lector.siguienteEntero("la cantidad de filas con bombas");
+            if (filasConBombas < 0 || filasConBombas > filas) {
+                throw new EEntradaInvalida("La cantidad de filas con bombas debe estar entre 0 y R="
+                        + filas + " (se leyo " + filasConBombas + ")");
+            }
+
+            for (int i = 0; i < filasConBombas; i++) {
+
+                int fila = lector.siguienteEntero("el numero de una fila con bombas");
+                validarCoordenada(fila, filas, "fila con bombas");
+
+                int cantidadBombas = lector.siguienteEntero("la cantidad de bombas en la fila " + fila);
+                if (cantidadBombas < 0 || cantidadBombas > columnas) {
+                    throw new EEntradaInvalida("La fila " + fila + " indica " + cantidadBombas
+                            + " bombas, pero la grilla solo tiene " + columnas + " columnas");
+                }
+
+                for (int b = 0; b < cantidadBombas; b++) {
+                    int col = lector.siguienteEntero("la columna de una bomba en la fila " + fila);
+                    validarCoordenada(col, columnas, "columna de una bomba");
+                    grid.setBombas(fila, col);
+                }
+            }
+
+            Punto inicio = leerPunto(lector, filas, columnas, "de inicio");
+            Punto destino = leerPunto(lector, filas, columnas, "de destino");
+
+            casos.add(new MisionUnoCaso(grid, inicio, destino));
+        }
+
+        // Si sobran tokens despues del sentinela R=0 C=0, casi siempre significa
+        // que alguna "cantidad de bombas" vino mal contada. Se avisa en vez de
+        // ignorarlo, tal como exige la seccion 2.2.
+        if (lector.haySiguiente()) {
+            throw new EEntradaInvalida("Sobran datos despues del caso de fin de entrada (R=0, C=0). "
+                    + "Revise que cada fila con bombas coincida con lo declarado.");
+        }
+
+        return casos;
+    }
+    // Lee fila y columna de un punto (inicio o destino) y valida que caiga dentro de la grilla.
+    private static Punto leerPunto(LectorTokens lector, int filas, int columnas, String etiqueta)
+            throws EEntradaInvalida {
+
+        int fila = lector.siguienteEntero("la fila " + etiqueta);
+        int col = lector.siguienteEntero("la columna " + etiqueta);
+        validarCoordenada(fila, filas, "fila " + etiqueta);
+        validarCoordenada(col, columnas, "columna " + etiqueta);
+        return new Punto(fila, col);
+    }
+
+    // Valida que un indice (fila o columna) este dentro de 0..limite-1.
+    private static void validarCoordenada(int valor, int limite, String descripcion) throws EEntradaInvalida {
+        if (valor < 0 || valor >= limite) {
+            throw new EEntradaInvalida("Valor de " + descripcion + " fuera de rango: " + valor
+                    + " (debe estar entre 0 y " + (limite - 1) + ")");
+        }
     }
 
     /*

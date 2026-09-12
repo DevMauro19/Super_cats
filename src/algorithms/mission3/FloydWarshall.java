@@ -1,4 +1,4 @@
 package algorithms.mission3;
 
-public class Floyd_Warshall {
+public class FloydWarshall {
 }

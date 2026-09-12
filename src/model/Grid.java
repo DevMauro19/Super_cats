@@ -44,7 +44,7 @@ public final class Grid {
 
     //Metodo con llamada recursiva para saber si hay bomba
     public boolean hayBomba(Punto p){
-        return hayBomba(p.getColumna(),p.getColumna());
+        return hayBomba(p.getColumna(),p.getFila());
     }
 
     // Metodo para saber si el punto esta dentro de los limites
