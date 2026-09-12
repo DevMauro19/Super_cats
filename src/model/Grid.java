@@ -44,7 +44,7 @@ public final class Grid {
 
     //Metodo con llamada recursiva para saber si hay bomba
     public boolean hayBomba(Punto p){
-        return hayBomba(p.getColumna(),p.getFila());
+        return hayBomba(p.getFila(),p.getColumna());
     }
 
     // Metodo para saber si el punto esta dentro de los limites
@@ -59,7 +59,8 @@ public final class Grid {
 
     public void valido(int row,int col){
         if(!limite(row,col)){
-        throw new EFueraRango("Celda fuera de rango: ("+row+", "+col+") en grilla "+fila+"x"+col);
+            // AQUÍ: Cambiamos el último 'col' por 'columna'
+            throw new EFueraRango("Celda fuera de rango: ("+row+", "+col+") en grilla "+fila+"x"+columna);
         }
     }
 

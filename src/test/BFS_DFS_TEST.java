@@ -22,11 +22,13 @@ public final class BFS_DFS_TEST {
             // Bombas exactamente como en el input de muestra del PDF
             setBombs(grid, 0, 2);
             setBombs(grid, 1, 2);
-            setBombs(grid, 2, 9);
+            setBombs(grid, 2, 2, 9);       // CORREGIDA: se agregó el 2
             setBombs(grid, 3, 1, 7);
             setBombs(grid, 5, 3, 6, 9);
             setBombs(grid, 6, 0, 1, 2, 7);
             setBombs(grid, 7, 0, 3, 8);
+            setBombs(grid, 8, 7, 9);       // NUEVA: faltaba la fila 8
+            setBombs(grid, 9, 2, 3, 4);    // NUEVA: faltaba la fila 9
 
             Punto start = new Punto(0, 0);
             Punto dest = new Punto(9, 9);
