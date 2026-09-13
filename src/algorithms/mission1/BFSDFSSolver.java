@@ -81,9 +81,16 @@ public final class BFSDFSSolver {
                 if (visited[neighborId]) {
                     continue;
                 }
+                // Se marca AL ENCOLAR y no al desencolar: si se marcara al sacar,
+                // la misma celda podria entrar varias veces antes de procesarse y
+                // el arreglo de la cola, dimensionado a una entrada por celda, se
+                // quedaria corto.
                 visited[neighborId] = true;
                 parent[neighborId] = currentId;
 
+                // Corte temprano: BFS avanza por niveles, asi que la PRIMERA vez
+                // que toca el destino ya lo hizo por el camino minimo. Esto vale
+                // solo porque el grafo no tiene pesos (todo movimiento cuesta 1).
                 if (neighborId == destId) {
                     List<Punto> path = buildPathFromParents(parent, destId, cols);
                     return PathResult.of(path.size() - 1, path);
@@ -142,6 +149,10 @@ public final class BFSDFSSolver {
                 continue;
             }
 
+            // Se consume UNA sola direccion por vuelta y se deja anotada la
+            // siguiente. Empujar los 4 vecinos de golpe seria el error clasico:
+            // la pila es LIFO y saldrian en orden invertido, con lo que el
+            // resultado dejaria de coincidir con el esperado.
             int dir = stackNextDir[top]++;
             int currentId = stackCell[top];
             int row = currentId / cols;
@@ -157,6 +168,8 @@ public final class BFSDFSSolver {
                 continue;
             }
 
+            // Empujar un frame equivale a la llamada recursiva: se avanza en
+            // profundidad y el frame nuevo arranca probando la direccion 0.
             visited[neighborId] = true;
             stackCell[sp] = neighborId;
             stackNextDir[sp] = 0;
