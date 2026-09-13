@@ -234,6 +234,117 @@ public final class Input {
         }
     }
 
+    // Entrada de ejemplo de la mision 3, tal cual aparece en el enunciado (seccion 5).
+    public static final String EJEMPLO_MISSION3 =
+            "3\n" +
+                    "5 7 0 4\n" +
+                    "0 1 50\n" +
+                    "0 2 10\n" +
+                    "1 2 -30\n" +
+                    "1 3 40\n" +
+                    "2 1 -5\n" +
+                    "2 3 60\n" +
+                    "3 4 20\n" +
+                    "4 4 0 3\n" +
+                    "0 1 20\n" +
+                    "1 2 30\n" +
+                    "2 1 -10\n" +
+                    "2 3 15\n" +
+                    "3 3 0 2\n" +
+                    "0 1 -40\n" +
+                    "1 2 -25\n" +
+                    "0 2 -80\n";
+
+    /*
+        MISION 3 (Floyd-Warshall & Bellman-Ford - La Reserva de Churun).
+
+        Formato esperado:
+            T                           -> cantidad de casos de prueba
+            para cada caso:
+                N M S D                 -> nodos, pasajes, origen, destino
+                M veces: A B W          -> pasaje DIRIGIDO de A a B que rinde W churun
+
+        A diferencia de las Misiones 2 y 4, aqui el grafo es DIRIGIDO
+        (new Graph(N, true)): un pasaje A B no se puede recorrer de B a A.
+        Los pesos SI pueden ser negativos (-1000 <= W <= 1000), porque
+        representan churun ganado o perdido en el pasaje, no una distancia.
+
+        Los nodos ya vienen numerados de 0 a N-1 en el enunciado (a diferencia
+        de la Mision 4, que numera desde 1), asi que no hace falta ninguna
+        conversion de indices aqui.
+
+        Pasajes repetidos entre el mismo par ordenado se agregan TODOS, sin
+        quedarse con uno solo (seccion 5: "treat each one as a separate edge");
+        Graph.addEdge ya soporta aristas duplicadas sin filtrarlas, e incluso
+        auto-ciclos (A == B), que son justamente los que Floyd-Warshall usa
+        para detectar un ciclo de ganancia positiva de un solo nodo.
+    */
+    public static List<MisionTresCaso> leerMision3(String texto) throws EEntradaInvalida, ENumeroNegativo {
+        LectorTokens lector = new LectorTokens(texto);
+        int casos = lector.siguienteEntero("la cantidad de casos de prueba (T)");
+
+        if (casos < 0) {
+            throw new EEntradaInvalida("La cantidad de casos de prueba no puede ser negativa: " + casos);
+        }
+
+        List<MisionTresCaso> listaCasos = new ArrayList<>();
+
+        for (int caso = 1; caso <= casos; caso++) {
+            int nodos = lector.siguienteEntero("N (cantidad de nodos) del caso " + caso);
+            if (nodos < 1 || nodos > 100) {
+                throw new EEntradaInvalida("N debe estar entre 1 y 100 en el caso " + caso + ", se leyo: " + nodos);
+            }
+
+            int pasajes = lector.siguienteEntero("M (cantidad de pasajes) del caso " + caso);
+            if (pasajes < 0 || pasajes > 5000) {
+                throw new EEntradaInvalida("M debe estar entre 0 y 5000 en el caso " + caso + ", se leyo: " + pasajes);
+            }
+
+            int origen = lector.siguienteEntero("S (nodo origen) del caso " + caso);
+            int destino = lector.siguienteEntero("D (nodo destino) del caso " + caso);
+
+            validarNodoMision3(origen, nodos, "origen (S)", caso);
+            validarNodoMision3(destino, nodos, "destino (D)", caso);
+
+            // Grafo DIRIGIDO: el 'true' es clave. Con 'false' cada pasaje se
+            // podria recorrer tambien al reves, lo que rompe todo el sentido
+            // de la deteccion de ciclos de esta mision.
+            Graph grafo = new Graph(nodos, true);
+
+            for (int i = 1; i <= pasajes; i++) {
+                int desde = lector.siguienteEntero("el nodo A del pasaje " + i + " (caso " + caso + ")");
+                int hasta = lector.siguienteEntero("el nodo B del pasaje " + i + " (caso " + caso + ")");
+                long churun = lector.siguienteLargo("el churun W del pasaje " + i + " (caso " + caso + ")");
+
+                validarNodoMision3(desde, nodos, "A del pasaje " + i, caso);
+                validarNodoMision3(hasta, nodos, "B del pasaje " + i, caso);
+
+                // A diferencia de las Misiones 2 y 4, aqui el peso SI puede
+                // ser negativo (seccion 5: -1000 <= W <= 1000).
+                if (churun < -1000 || churun > 1000) {
+                    throw new EEntradaInvalida("El churun W debe estar entre -1000 y 1000 en el pasaje " + i
+                            + " (caso " + caso + "), se leyo: " + churun);
+                }
+
+                grafo.addEdge(desde, hasta, churun);
+            }
+
+            listaCasos.add(new MisionTresCaso(grafo, origen, destino));
+        }
+
+        if (lector.haySiguiente()) {
+            throw new EEntradaInvalida("Sobran datos despues del ultimo caso de prueba.");
+        }
+
+        return listaCasos;
+    }
+
+    private static void validarNodoMision3(int nodo, int totalNodos, String etiqueta, int caso) throws EEntradaInvalida {
+        if (nodo < 0 || nodo >= totalNodos) {
+            throw new EEntradaInvalida("El nodo " + etiqueta + " es " + nodo + ", pero debe estar entre 0 y " + (totalNodos - 1) + " (caso " + caso + ")");
+        }
+    }
+
     /*
         MISION 4 (Kruskal).
 

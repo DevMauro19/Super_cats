@@ -2,6 +2,7 @@ package io;
 
 import algorithms.mission1.PathResult;
 import algorithms.mission2.DijkstraResult;
+import algorithms.mission3.Mission3Result;
 
 /*
     Convierte los resultados de un algoritmo en la linea de texto exacta que
@@ -39,5 +40,28 @@ public final class Output {
             return "Case #" + casoNum + ": Nina is very sad";
         }
         return "Case #" + casoNum + ": " + result.getDistancia();
+    }
+
+    /*
+        MISION 3 (Floyd-Warshall & Bellman-Ford).
+
+        Formato exigido, en este orden EXACTO de precedencia (seccion 5):
+            1) "Case #k: Limon blocked the way"   -> D no alcanzable desde S
+            2) "Case #k: Infinite churun!"        -> maximo no acotado
+            3) "Case #k: <valor>"                 -> el maximo (puede ser negativo)
+
+        El resultado ya trae ese orden resuelto por Mission3Solver (que usa
+        Floyd-Warshall como fuente de la respuesta impresa); esta funcion solo
+        formatea, igual que las demas de esta clase.
+    */
+    public static String formatearMision3(int casoNum, Mission3Result resultado) {
+        switch (resultado.getEstado()) {
+            case BLOQUEADO:
+                return "Case #" + casoNum + ": Limon blocked the way";
+            case INFINITO:
+                return "Case #" + casoNum + ": Infinite churun!";
+            default:
+                return "Case #" + casoNum + ": " + resultado.getValor();
+        }
     }
 }
