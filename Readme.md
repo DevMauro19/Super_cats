@@ -130,4 +130,4 @@ Es la ventana principal de la interfaz gráfica. Aquí se debería conectar la e
 
 En `src/test` se encuentran pruebas de referencia para los algoritmos principales. Actualmente `BFS_DFS_TEST.java` cubre BFS y DFS de la misión 1 contra el ejemplo del enunciado (`BFS 18 DFS 32`). Los demás archivos (`DIJKSTRA_TEST`, `FLOYDWARSHALL_BELLMANFORD_TEST`, `KRUSKAL_TEST`) cuentan con casos reales y verificables.
 
-![Rescue Cat](src/images/rescuecat.webp)
+![Rescue Cat](src/images/rescuecat.jpg)
