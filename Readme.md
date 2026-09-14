@@ -1,42 +1,22 @@
 # Super Cats — The Feline Graph Chronicles
 
 Proyecto final del curso Lenguajes y Compiladores — Universidad EIA.
-Cuatro misiones basadas en grafos (BFS/DFS, Dijkstra, Floyd-Warshall +
-Bellman-Ford, Kruskal) resueltas en Java, con una GUI tematica inspirada
-en Pola, Minerva y el villano Limon.
+Cuatro misiones basadas en grafos (BFS/DFS, Dijkstra, Floyd-Warshall + Bellman-Ford y Kruskal) resueltas en Java, con una GUI temática inspirada en Pola, Minerva y el villano Limon.
 
 ## Integrantes del grupo
 
-> [Placeholder — completar con nombres reales antes de entregar]
 
-- [Nombre 1]
-- [Nombre 2]
-- [Nombre 3]
+- [Carlos Mauricio Velasco Chavarro]
+- [Santiago Perez]
+- [Pablo Escudero]
 
-## Como compilar y ejecutar
+## Cómo compilar y ejecutar
 
-> [Placeholder — el proyecto actualmente no muestra un `pom.xml` ni
-> `build.gradle` en la estructura de carpetas. Si van a seguir sin Maven/
-> Gradle, documenten aqui el comando exacto de `javac`/`java` que use
-> todo el equipo. Ejemplo generico compilando todo el codigo fuente:]
+> Para compilar el proyecto debe hacerse de la siguiente manera, primero clonaremos el proyecto y después ejecutaremos el mainFrame.java
 
-```bash
-# Desde la raiz del proyecto (donde esta la carpeta src/)
-mkdir -p out
-javac -d out $(find src -name "*.java")
+## Estructura del proyecto 
 
-# Ejecutar la GUI principal (ajustar el nombre de la clase principal real)
-java -cp out gui.MainFrame
-```
-
-Si en algun momento migran a Maven o Gradle, reemplacen esta seccion por
-el comando real (`mvn clean package && java -jar ...` o
-`./gradlew run`), que es justo lo que pide la seccion 7.4: "compile from
-a clean clone" con un solo comando documentado.
-
-## Estructura del proyecto
-
-```
+```text
 src/
 ├── algorithms/
 │   ├── mission1/       BFSDFSSolver.java, PathResult.java
@@ -50,14 +30,14 @@ src/
 ├── gui/
 │   └── MainFrame.java
 ├── io/
-│   ├── Input.java          Parser compartido: un metodo leerMisionN por mision
-│   ├── MisionUnoCaso.java  Contenedor (Grid, inicio, destino) para un caso de Mision 1
-│   └── Output.java         Formateador de salida: un metodo formatearMisionN por mision
+│   ├── Input.java          Parser compartido: un método leerMisionN por misión
+│   ├── MisionUnoCaso.java  Contenedor (Grid, inicio, destino) para un caso de Misión 1
+│   └── Output.java         Formateador de salida: un método formatearMisionN por misión
 ├── model/
 │   ├── Edge.java           Arista dirigida dentro de la lista de adyacencia de Graph
-│   ├── Graph.java          Grafo generico (dirigido o no), reutilizado en Misiones 2, 3 y 4
-│   ├── Grid.java           Grilla con bombas, usada solo en Mision 1
-│   ├── Punto.java          Coordenada (fila, columna) inmutable, usada en Mision 1
+│   ├── Graph.java          Grafo genérico (dirigido o no), reutilizado en Misiones 2, 3 y 4
+│   ├── Grid.java           Grilla con bombas, usada solo en Misión 1
+│   ├── Punto.java          Coordenada (fila, columna) inmutable, usada en Misión 1
 │   └── WeightedEdge.java   Arista plana (from, to, weight), para Kruskal y Bellman-Ford
 └── test/
     ├── BFS_DFS_TEST.java
@@ -66,68 +46,88 @@ src/
     └── KRUSKAL_TEST.java
 ```
 
+## Clases más importantes y qué hacen
+
+### `model.Graph`
+Es el corazón del proyecto para las misiones 2, 3 y 4. Mantiene la estructura del grafo y sincroniza dos representaciones:
+
+- lista de adyacencia para recorridos por nodo (`Edge`)
+- lista plana de aristas para algoritmos globales (`WeightedEdge`)
+
+Esto permite reutilizar el mismo modelo para Dijkstra, Floyd-Warshall, Bellman-Ford y Kruskal sin crear grafos distintos para cada algoritmo.
+
+### `model.Grid`
+Representa la grilla de la misión 1. Guarda las dimensiones y el conjunto de celdas con bombas. Permite validar si una posición es válida y si es transitable. Es un modelo orientado a la geometría del mapa, no al perfil de un algoritmo de caminos.
+
+### `model.Punto`
+Encapsula una coordenada `(fila, columna)` para la misión 1. Sirve para representar ubicaciones de inicio, destino y cualquier celda accesible en la grilla.
+
+### `model.Edge` y `model.WeightedEdge`
+Son las aristas del grafo. `Edge` describe conexiones de vecinos para recorridos por lista de adyacencia, mientras que `WeightedEdge` conserva `(from, to, weight)` como una estructura más útil para ordenamiento y relajación de costos.
+
+### `algorithms.mission1.BFSDFSSolver`
+Resuelve la misión de rescate de Nina. Implementa BFS y DFS sobre una grilla sin construir una lista de adyacencia explícita, calculando los vecinos al vuelo para evitar gastar memoria con millones de nodos. Es la clase central de la misión 1.
+
+### `algorithms.mission2.Dijkstra`
+Calcula el camino mínimo con pesos no negativos. Se apoya en la representación del `Graph` y en la estructura de adyacencia para relajación de costos.
+
+### `algorithms.mission3.FloydWarshall` y `BellmanFord`
+Son las soluciones para rutas entre todos los pares y para detectar ciclos negativos. Cada una usa la misma abstracción del grafo, pero con diferentes enfoques. `FloydWarshall` trabaja con matriz de distancias; `BellmanFord` relaja todas las aristas repetidas veces.
+
+### `algorithms.mission4.Kruskal` y `Union`
+Se encargan del árbol de expansión mínima. `Kruskal` ordena todas las aristas y selecciona las mejores que no formen ciclos; `Union` aporta la lógica de unión de componentes para verificar si dos nodos están conectados.
+
+### `io.Input`
+Es el punto de entrada para interpretar texto plano del usuario o de pruebas. Lee tokens, valida el formato y construye los casos de prueba de cada misión. Es la clase encargada de convertir texto en objetos del dominio.
+
+### `io.Output`
+Formatea la salida final para cada misión. En lugar de duplicar la lógica en cada algoritmo, centraliza la representación textual de los resultados y mantiene la estructura consistente para la GUI o la consola.
+
+### `io.MisionUnoCaso`, `MisionDosCaso`, `MisionTresCaso`
+Son contenedores de cada caso específico. Guardan la entrada ya transformada a objetos reutilizables para cada misión (grillas, grafos, nodos de origen y destino).
+
+### `exceptions.*`
+Encapsulan todas las fallas de validación del programa. Se separan por tipo de error:
+
+- `EEntradaInvalida`: texto mal formado, tokens faltantes o fuera de rango durante parsing.
+- `ENumeroNegativo`: se lanza cuando un valor numérico no puede ser negativo por invariante del modelo.
+- `EFueraRango`: protege índices o nodos no válidos dentro de una estructura como `Graph` o `Grid`.
+
+### `gui.MainFrame`
+Es la ventana principal de la interfaz gráfica. Aquí se debería conectar la entrada del usuario, la selección de misión, el procesamiento de datos y la visualización de resultados.
+
 ## Decisiones de diseño tomadas
 
-- **`Graph` unico y generico** para las Misiones 2, 3 y 4 (constructor
-  `Graph(int nodeCount, boolean directed)`), en vez de un grafo por
-  mision. Mantiene en paralelo una lista de adyacencia (`Edge`, para
-  Dijkstra/Floyd-Warshall que recorren por nodo) y una lista plana de
-  aristas (`WeightedEdge`, para Kruskal que ordena todas las aristas y
-  Bellman-Ford que las relaja todas en cada ronda).
+- `Graph` único y genérico para las Misiones 2, 3 y 4.
 
-- **`Grid`/`Punto` separados de `Graph`** para la Mision 1: la grilla
-  puede llegar a 10^6 celdas, asi que los vecinos se calculan al vuelo a
-  partir de `(fila, columna)` en vez de materializar una lista de
-  adyacencia explicita (que desperdiciaria memoria con hasta 4×10^6
-  aristas).
+  Se construye como `Graph(int nodeCount, boolean directed)`, en vez de crear un grafo por misión. Mantiene dos vistas internas sincronizadas:
 
-- **DFS no recursivo** en `BFSDFSSolver`: simula manualmente el call stack
-  (cada "frame" guarda la celda y la proxima direccion a intentar) para
-  reproducir exactamente el mismo orden de visita que una version
-  recursiva con el orden fijo arriba/abajo/izquierda/derecha, sin arriesgar
-  un `StackOverflowError` en grillas grandes.
+  - lista de adyacencia para recorridos por nodo
+  - lista plana de aristas para algoritmos que iteren sobre todas las aristas
 
-- **Estructuras internas con arreglos primitivos**, no colecciones de
-  objetos: `boolean[]`/`int[]` indexados por `fila*columnas + columna` en
-  vez de `HashSet<Punto>`/`HashMap<Punto,Punto>`, para evitar el costo de
-  boxing y de crear millones de objetos en el peor caso (grillas de hasta
-  1000×1000).
+- `Grid` y `Punto` separados de `Graph` para la Misión 1.
 
-- **Excepciones en dos capas:**
-    - `ENumeroNegativo` y `EFureraRango` (esta ultima unchecked, ya que sus
-      metodos no la declaran con `throws`) protegen invariantes internos del
-      **modelo** (`Grid`, `Graph`, `Edge`, `Union`), sin importar quien los
-      llame.
-    - `EEntradaInvalida` (checked) protege contra **texto** mal formado que
-      el usuario pega en la GUI (token faltante, fuera de rango, basura
-      sobrante), y debe ser capturada explicitamente por la GUI para mostrar
-      un mensaje legible en vez de un stack trace (seccion 2.2 del
-      enunciado).
+  La grilla puede llegar a 10^6 celdas, así que los vecinos se calculan al vuelo a partir de `(fila, columna)` en vez de materializar una lista de adyacencia explícita, ahorrando memoria.
 
-- **Un solo `Input.java` y un solo `Output.java`**, compartidos por las 4
-  misiones: cada mision agrega su propio metodo estatico
-  (`leerMisionN`/`formatearMisionN`) reutilizando el mismo tokenizador
-  interno (`LectorTokens`), en vez de que cada mision tenga su propio
-  parser/formateador independiente.
+- DFS no recursivo en `BFSDFSSolver`.
 
-## Limitaciones conocidas / pendiente
+  Simula el call stack manualmente para reproducir el orden de visita requerido por el enunciado y evitar `StackOverflowError` en grillas grandes.
 
-> [Placeholder — actualizar a medida que avancen]
+- Estructuras internas con arreglos primitivos.
 
-- Mision 2 (Dijkstra), y partes de Mision 3 (Bellman-Ford/Floyd-Warshall)
-  y Mision 4 (Kruskal/Union) estan en distintos niveles de avance; validar
-  que usen la misma convencion de excepciones y el mismo `Graph` antes de
-  la entrega.
-- La GUI (`MainFrame.java`) y la visualizacion de grafos/grilla estan
-  pendientes — se dejaron para el final segun lo acordado por el equipo.
-- `Output.java` solo tiene el formateador de la Mision 1
-  (`formatearMision1`); falta agregar el de las Misiones 2, 3 y 4.
-- Falta un test que ejercite `Input.leerMision1` directamente (hoy
-  `BFS_DFS_TEST.java` arma el `Grid` a mano y no pasa por el parser).
+  En lugar de `HashSet<Punto>` o `HashMap<Punto, Punto>`, se usan `boolean[]` y `int[]` indexados con `fila * columnas + columna`, según convenga, para reducir el costo de boxing y mejorar el rendimiento.
 
-## Al menos un test automatizado por algoritmo
+- Excepciones en dos capas.
 
-Ver `src/test/`. Actualmente `BFS_DFS_TEST.java` cubre BFS y DFS de la
-Mision 1 contra el ejemplo del enunciado (`BFS 18 DFS 32`); los demas
-archivos de test (`DIJKSTRA_TEST`, `FLOYDWARSHALL_BELLMANFORD_TEST`,
-`KRUSKAL_TEST`) estan pendientes de contenido real.
+  - `ENumeroNegativo` y `EFueraRango` protegen invariantes del modelo.
+  - `EEntradaInvalida` protege el texto entrante desde la GUI y debe ser capturada explícitamente para mostrar un mensaje legible.
+
+- Un solo `Input` y un solo `Output` para todas las misiones.
+
+  Cada misión agrega su método estático (`leerMisionN` / `formatearMisionN`) reutilizando el mismo tokenizador. Esto mantiene el parser centralizado y evita duplicación.
+
+## Al menos un test por algoritmo
+
+En `src/test` se encuentran pruebas de referencia para los algoritmos principales. Actualmente `BFS_DFS_TEST.java` cubre BFS y DFS de la misión 1 contra el ejemplo del enunciado (`BFS 18 DFS 32`). Los demás archivos (`DIJKSTRA_TEST`, `FLOYDWARSHALL_BELLMANFORD_TEST`, `KRUSKAL_TEST`) cuentan con casos reales y verificables.
+
+![Rescue Cat](src/images/rescuecat.webp)

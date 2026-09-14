@@ -77,7 +77,7 @@ trabajada en conjunto con la IA en esta sesion.
 3. **Se genero un archivo de test (`SampleTest.java`) redundante.** Se
    penso que el equipo aun no tenia un test automatizado para la Mision 1,
    asi que se creo un `main()` de verificacion manual. Cuando el equipo
-   mostro que ya existia `BFS_DFS_TEST.java` en `src/test/`, ese archivo
+   mostro que ya existia `BFS_DFS_TEST.java` en `src/test`, ese archivo
    quedo duplicado sin aportar nada nuevo. **Correccion:** se elimino
    `SampleTest.java` del proyecto.
 

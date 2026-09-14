@@ -3,6 +3,7 @@ package io;
 import algorithms.mission1.PathResult;
 import algorithms.mission2.DijkstraResult;
 import algorithms.mission3.Mission3Result;
+import algorithms.mission4.Kruskal;
 
 /*
     Convierte los resultados de un algoritmo en la linea de texto exacta que
@@ -63,5 +64,22 @@ public final class Output {
             default:
                 return "Case #" + casoNum + ": " + resultado.getValor();
         }
+    }
+
+    /*
+        MISION 4 (Kruskal).
+
+        Formato exigido:
+            Case #k: <total cost>
+        o, si la red no se puede reconectar con los cables disponibles:
+            Case #k: Limon cut too many cables
+
+        Kruskal.Resultado.comoTexto() ya resuelve cual de los dos casos
+        aplica (usa MENSAJE_SIN_SOLUCION tal cual, caracter por caracter);
+        esta funcion solo le agrega el prefijo "Case #k: ", igual que las
+        demas misiones.
+    */
+    public static String formatearMision4(int casoNum, Kruskal.Resultado resultado) {
+        return "Case #" + casoNum + ": " + resultado.comoTexto();
     }
 }
