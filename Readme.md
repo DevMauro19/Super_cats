@@ -29,8 +29,12 @@ src/
 │   └── ENumeroNegativo.java    (checked — invariante interno del modelo)
 ├── gui/
 │   └── MainFrame.java
+├── images/
+│   └── rescuecat.jpg        (imagen para el README.md)
 ├── io/
 │   ├── Input.java          Parser compartido: un método leerMisionN por misión
+│   ├── MisionDosCaso.java  Contenedor para caso de Misión 2
+│   ├── MisionTresCaso.java Contenedor para caso de Misión 3
 │   ├── MisionUnoCaso.java  Contenedor (Grid, inicio, destino) para un caso de Misión 1
 │   └── Output.java         Formateador de salida: un método formatearMisionN por misión
 ├── model/
