@@ -10,6 +10,14 @@ fuera de ambas sesiones.
 
 ## 1. Herramientas usadas y para que parte del proyecto
 
+**Reparto del trabajo cubierto por este documento**
+
+- **Carlos Mauricio Velasco** — Mision 1 (BFS y DFS), Mision 2 (Dijkstra), GUI
+  y visualizacion.
+- **Santiago Perez** — Mision 4 (Kruskal y union-find), el metodo
+  `Input.leerMission4` y la excepcion compartida `EEntradaInvalida`.
+
+
 - **Claude (Anthropic), modelo Sonnet**, usado como asistente de diseno y
   generacion de codigo para:
     - Las clases del modelo compartidas entre misiones: `Point`/`Punto`,
@@ -198,8 +206,8 @@ Se documenta aparte porque respalda lo afirmado en las secciones anteriores.
 - Todas las verificaciones se hicieron compilando desde un clon limpio de
   GitHub, que es lo que exige la seccion 7.4.
 
-La revision asistida tambien encontro tres problemas en codigo que no era de
-quien hizo la revision:
+La revision asistida en la sesion de la Mision 4 tambien encontro tres
+problemas en codigo escrito por otros integrantes:
 
 1. **`Grid.hayBomba(Punto)` pasaba fila y columna invertidas.** La firma es
    `hayBomba(int fila, int col)` y el metodo llamaba
