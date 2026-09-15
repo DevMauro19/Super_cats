@@ -1,16 +1,28 @@
 # AI_USAGE.md — Super Cats (The Feline Graph Chronicles)
 
-Este documento describe honestamente el uso de IA (Claude) durante el
-desarrollo del proyecto, siguiendo lo pedido en la seccion 8.1 del enunciado.
-Recoge **tres sesiones de trabajo independientes, con modelos distintos**:
+Este documento describe honestamente el uso de IA durante el desarrollo del
+proyecto, siguiendo lo pedido en la seccion 8.1 del enunciado. Recoge el
+trabajo de varias sesiones, con distintos integrantes y distintas
+herramientas, cada una asociada a una mision:
 
-- Mision 1 (modelo, parser, algoritmo y formateo de salida) — **Claude Sonnet**.
-- Mision 3 (Floyd-Warshall, Bellman-Ford y su verificacion cruzada) — **Claude
-  Sonnet**, en una sesion posterior e independiente de la anterior.
-- Mision 4 (Kruskal, union-find y parser) — **Claude Opus 5**, que ademas
-  reviso y probo el codigo de las Misiones 1, 2 y 3 ya subido por el equipo.
+- **Mision 1** (modelo, parser, algoritmo y formateo de salida) — **Claude,
+  modelo Sonnet**, con exploracion adicional de otras herramientas (GitHub
+  Copilot, un modelo "mai-code-1.1-flash", y ChatGPT modelo "GPT-5.6 Luna")
+  segun indica el equipo; este documento no detalla en cuales archivos o
+  tareas exactas se uso cada una de esas otras herramientas, asi que queda
+  pendiente que quien las uso lo precise antes de la entrega, para que la
+  seccion 8.1 quede completa y defendible.
+- **Mision 2** (Dijkstra) — IA (sin una herramienta especifica documentada
+  mas alla de lo mencionado arriba), apoyada tambien en el PDF del enunciado
+  y en los codigos vistos en clase.
+- **Mision 3** (Floyd-Warshall, Bellman-Ford y su verificacion cruzada) —
+  **Claude, modelo Sonnet**, en una sesion independiente de las anteriores.
+- **Mision 4** (Kruskal, union-find y parser) — **Claude, modelo Opus 5**,
+  que ademas reviso y probo el codigo de las Misiones 1, 2 y 3 ya subido por
+  el equipo.
 
-La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
+La GUI y la visualizacion se avanzaron por fuera de todas las sesiones
+anteriores.
 
 ## 1. Herramientas usadas y para que parte del proyecto
 
@@ -37,8 +49,14 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
       BFS/DFS generica, y las clases reales `Grid`/`Punto`/`Input`), senalando
       bugs y falta de cumplimiento de requisitos del enunciado.
 
+- **IA (Mision 2 — Dijkstra)**: tambien se uso IA en la generacion del
+  codigo de las clases `Dijkstra`, `DijkstraResult`, `MisionCasoDos` y
+  `DIJKSTRA_TEST`. El codigo de estas clases se baso en el PDF compartido
+  para el caso de los tests, y para el resto del codigo de la mision se
+  baso en los codigos vistos en clase.
+
 - **Claude (Anthropic), modelo Sonnet**, en una tercera sesion, independiente
-  de las otras dos, usado para la **Mision 3 completa**:
+  de las otras, usado para la **Mision 3 completa**:
     - `algorithms/mission3/FloydWarshall.java` y `FloydWarshallResult.java`:
       maximo churun entre todos los pares (matriz N x N), con una pasada
       extra despues del triple bucle clasico para marcar los pares "no
@@ -78,9 +96,9 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
       compilacion desde un clon limpio de GitHub, ejecucion de los ejemplos del
       enunciado y pruebas adicionales generadas para buscar fallos.
 
-- La GUI y la visualizacion no se trabajaron con IA en ninguna de las tres
-  sesiones. Si algun integrante uso IA para esas partes, debe documentarlo
-  aqui.
+- La GUI y la visualizacion no se trabajaron con IA en ninguna de las
+  sesiones documentadas aqui. Si algun integrante uso IA para esas partes,
+  debe documentarlo en esta misma seccion.
 
 ## 2. Prompts decisivos
 
@@ -102,14 +120,34 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
    (rompiendo la separacion algoritmo/GUI exigida en la seccion 7.2).
 
 3. **Compartir el `Grid.java`, `Punto.java` e `Input.java` reales del
-   equipo** — este prompt hizo que se abandonara un primer diseno de
-   parser en ingles (`TokenReader`, `Mission1Parser`, excepcion unchecked)
-   y se adaptara todo a la convencion que el equipo ya habia elegido
-   (`LectorTokens`, `EEntradaInvalida` checked, nombres en espanol). Tambien
-   permitio detectar un bug real en `Grid.hayBomba(Punto)` (pasaba
-   `p.getColumna()` dos veces en vez de `p.getFila()` y `p.getColumna()`).
+   equipo** — este prompt hizo que se abandonara un primer diseno de parser
+   en ingles (`Mission1Parser`, excepcion unchecked) y se adaptara todo a la
+   convencion que el equipo ya habia elegido (`EEntradaInvalida` checked,
+   nombres en espanol). Tambien permitio detectar un bug real en
+   `Grid.hayBomba(Punto)` (pasaba `p.getColumna()` dos veces en vez de
+   `p.getFila()` y `p.getColumna()`).
 
-4. **Compartir el PDF completo del enunciado junto con un zip del
+4. **"Generame un test para la mision 1 basada en el ejemplo del enunciado
+   del pdf"** — este prompt genero el test de la Mision 1 con los datos
+   exactos del PDF en vez de datos inventados, y el mismo patron se repitio
+   para pedir el test de cada una de las demas misiones.
+
+5. **Compartir el PDF del enunciado junto con el enlace al repositorio y
+   preguntar en que consistia la Mision 4** — de aqui salieron dos decisiones
+   de arquitectura de la sesion de Mision 4: que `Kruskal.ejecutar()` devolviera
+   un objeto `Resultado` con los cables seleccionados, para que la GUI pueda
+   resaltar el MST sin recalcular nada (seccion 7.3), y que el prefijo
+   `Case #k:` lo armara `io/Output` y no el algoritmo, manteniendo la
+   separacion que exige la seccion 7.2.
+
+6. **"¿Que es el parser de la entrada? ¿Donde pide eso el enunciado?"** — saco
+   a la luz la seccion 2.2, que esta en las reglas generales y no en la
+   seccion de cada mision: la entrada debe leerse como un **flujo de
+   tokens**, sin asumir un numero fijo por linea. Eso cambio el diseno del
+   parser: en vez de `readLine()` mas `split(" ")`, se parte todo el texto
+   de una vez con `split("\\s+")` y se consume token por token.
+
+7. **Compartir el PDF completo del enunciado junto con un zip del
    repositorio tal como estaba** (sesion de Mision 3) — este prompt fue el
    punto de partida de toda la implementacion. Antes de escribir una sola
    linea de Floyd-Warshall o Bellman-Ford, se leyeron `Graph.java`,
@@ -120,14 +158,6 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
    `Mission3Solver` usara exactamente `getNeightbors`, `addEdge`,
    `NodoValido` y el mismo estilo de excepciones checked que el resto del
    proyecto.
-
-5. **"¿Que es el parser de la entrada? ¿Donde pide eso el enunciado?"** — saco
-   a la luz la seccion 2.2, que esta en las reglas generales y no en la seccion
-   de cada mision: la entrada debe leerse como un **flujo de tokens**, sin
-   asumir un numero fijo por linea. Eso cambio el diseno del parser: en vez de
-   `readLine()` mas `split(" ")`, se parte todo el texto de una vez con
-   `split("\\s+")` y se consume token por token. Es lo que hace que la misma
-   entrada pegada en una linea o en veinte produzca el mismo resultado.
 
 ## 3. Casos donde la salida de la IA fue incorrecta o subóptima
 
@@ -162,7 +192,14 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
    metodo. Esto no compilaba. **Correccion:** se agrego el import faltante
    tras revisar el arbol de archivos del proyecto y detectar el error.
 
-5. **Se recomendo escribir `leerMission4` en el `io/Input.java` compartido sin
+5. **La IA perdia el contexto de la sesion y del arbol de clases ya
+   trabajado.** Por ejemplo, despues de que el equipo mostro `Grid.java` y
+   `Punto.java`, la IA volvio a generar versiones alternativas de esas
+   clases con nombres en ingles y sin cumplir los requisitos del enunciado.
+   **Correccion:** se descarto todo lo que no coincidiera con el proyecto
+   real, y se le recordo a la IA que ya habia visto esos archivos.
+
+6. **Se recomendo escribir `leerMission4` en el `io/Input.java` compartido sin
    coordinarlo antes con el grupo.** La IA senalo el riesgo de conflicto y aun
    asi recomendo seguir adelante. El conflicto ocurrio y quedo registrado en el
    commit `0561174` ("resolviendo problemas de merge"). **Correccion:** el
@@ -170,7 +207,7 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
    archivo, y avisar antes de tocarlo. La convencion funciono: los parsers de
    las Misiones 1, 2 y 3 se agregaron despues sin volver a chocar.
 
-6. **La IA dejo un archivo `.git/index.lock` huerfano** al correr `git status`
+7. **La IA dejo un archivo `.git/index.lock` huerfano** al correr `git status`
    contra el repositorio local a traves de su puente de archivos, que no tiene
    permiso para borrar archivos. Eso bloqueo todos los `git add` y `git commit`
    en la maquina con el error "Another git process seems to be running", sin
@@ -178,27 +215,27 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
    dos archivos `.lock` a mano y se dejo de ejecutar git por ese puente; a
    partir de ahi la inspeccion del repositorio se hizo sobre un clon aparte.
 
-7. **El parser de la Mision 4 rechaza tokens sobrantes despues del ultimo
+8. **El parser de la Mision 4 rechaza tokens sobrantes despues del ultimo
    caso**, con el mensaje "Sobran datos despues del ultimo caso". Es una
    decision deliberada para cumplir la seccion 2.2 (nunca un fallo silencioso),
    pero es mas estricta de lo que el enunciado exige y rechazaria una entrada
    que por lo demas es valida. **Correccion:** ninguna; se dejo asi de forma
    consciente, y queda documentado como una decision y no como un descuido.
 
-8. **La IA inserto a proposito un import invalido** (`import
+9. **La IA inserto a proposito un import invalido** (`import
    java.util.Collravamosections;`) en la primera entrega de `Kruskal.java`,
    avisando de ello en el mismo mensaje, para forzar que el codigo se leyera
    antes de pegarlo en vez de copiarlo en automatico. **Correccion:** se
    detecto y se elimino antes de compilar.
 
-9. **Errores de tipeo en los comentarios de complejidad (Mision 3).** Los
-   comentarios de `FloydWarshall.java` y `BellmanFord.java` decian "son come
-   10^6 operaciones" y "son come 5*10^5 operaciones" en vez de "son unas".
-   No afectaba la compilacion, pero es un descuido de redaccion en codigo
-   que se va a defender en publico. **Correccion:** se corrigieron ambos
-   comentarios antes de la entrega.
+10. **Errores de tipeo en los comentarios de complejidad (Mision 3).** Los
+    comentarios de `FloydWarshall.java` y `BellmanFord.java` decian "son come
+    10^6 operaciones" y "son come 5*10^5 operaciones" en vez de "son unas".
+    No afectaba la compilacion, pero es un descuido de redaccion en codigo
+    que se va a defender en publico. **Correccion:** se corrigieron ambos
+    comentarios antes de la entrega.
 
-10. **Reemplazar toda la carpeta `src` genero cambios falsos en Git (Mision
+11. **Reemplazar toda la carpeta `src` genero cambios falsos en Git (Mision
     3).** El zip con el codigo de Mision 3 se genero en un entorno Linux (fin
     de linea LF), mientras que el repositorio del equipo usa CRLF (Windows).
     Al reemplazar `src/` completa, `git status` marco como "modified" 19
@@ -208,7 +245,7 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
     esos 19 archivos con `git checkout -- <archivos>` antes de comitear, para
     no ensuciar el historial del repositorio con cambios fantasma.
 
-11. **La IA no pudo compilar ni ejecutar el codigo que genero en la sesion de
+12. **La IA no pudo compilar ni ejecutar el codigo que genero en la sesion de
     Mision 3.** El entorno donde corrio Claude no tenia `javac` instalado
     (solo un JRE) ni acceso a internet para instalarlo. Todo el codigo se
     verifico primero mediante una revision manual exhaustiva (balance de
@@ -222,24 +259,34 @@ La Mision 2 y la GUI se avanzaron por fuera de las tres sesiones.
 
 ## 4. Que aprendio cada integrante
 
-> [Placeholder — cada integrante debe completar esto con sus propias
-> palabras antes de entregar. Algunos temas que surgieron durante las
-> sesiones y que pueden servir de base:]
-
-- **Carlos Mauricio Velasco:** _(por ejemplo: por que un DFS recursivo revienta
-  el stack con grillas grandes, y como simular manualmente el "call stack"
-  con una pila explicita para reproducir exactamente el mismo orden de
-  visita que la recursion — sin invertir el orden arriba/abajo/izquierda/
-  derecha al usar una estructura LIFO)._
-- **Pablo Escudero:** _(por ejemplo: por que Floyd-Warshall necesita una
-  pasada EXTRA despues del triple bucle clasico para distinguir "el mejor
-  valor finito que alcanzo a encontrar" de "realmente no tiene limite"; por
-  que la propagacion de un ciclo de ganancia positiva debe seguir unicamente
-  las aristas SALIENTES desde el ciclo y no cualquier nodo alcanzable en
-  cualquier direccion; o la diferencia entre una caminata (walk, que puede
-  repetir nodos y aristas) y un camino simple, y por que maximizar sobre
-  caminatas es un problema polinomial mientras que sobre caminos simples
-  seria NP-duro)._
+- **Carlos Mauricio Velasco:** La importancia de tener una idea de lo que vas
+  a desarrollar te permite ser mas especifico y riguroso con la informacion
+  que le proporcionas a la IA; la IA pierde el contexto con facilidad,
+  debemos establecer reglas para el desarrollo, no se puede aceptar todo lo
+  que dice la IA, debemos siempre mirar que el codigo generado cumpla con las
+  reglas que establecimos. Establecer una plantilla con la que va a trabajar
+  el equipo ayuda a que el desarrollo sea eficiente y consistente. Las IA
+  pueden verse muy beneficiadas si les compartimos el arbol de nuestro
+  proyecto.
+- **Pablo Escudero:** Entendi por que Floyd-Warshall necesita una pasada EXTRA
+  despues del triple bucle clasico: el triple bucle por si solo deja numeros
+  grandes pero finitos en las celdas afectadas por un ciclo de ganancia
+  positiva, y sin esa pasada extra (que marca (i,j) como no acotado si existe
+  un nodo k con d[i][k] finito, d[k][k] > 0 y d[k][j] finito) esos numeros se
+  verian como una respuesta valida en vez de "Infinite churun!". Tambien
+  entendi que la propagacion de un ciclo positivo en Bellman-Ford debe seguir
+  UNICAMENTE las aristas salientes desde el nodo que detecta la mejora extra
+  en la ronda N, y no cualquier nodo alcanzable en cualquier direccion: lo que
+  se contagia es "desde aqui puedo llegar a un ciclo que gana churun sin
+  limite", no "cualquiera cerca de un ciclo positivo es no acotado". Y quedo
+  clara la diferencia entre una caminata (que puede repetir nodos y aristas) y
+  un camino simple: maximizar sobre caminatas es justamente lo que hace
+  tratable el problema con programacion dinamica en tiempo polinomial,
+  mientras que buscar el camino simple mas largo seria NP-duro. Por ultimo,
+  trabajar con IA en esta mision me dejo claro que el codigo generado no viene
+  "verificado": la unica prueba real de que compilaba y de que el algoritmo
+  era correcto fue compilarlo yo mismo en IntelliJ y correr el test contra el
+  ejemplo del enunciado.
 - **Santiago Perez:** por que el proyecto tiene `Edge` y `WeightedEdge` como
   clases separadas: el `Edge` que vive en la lista de adyacencia no guarda el
   nodo de origen porque este esta implicito en el indice del arreglo, mientras
@@ -263,10 +310,10 @@ Se documenta aparte porque respalda lo afirmado en las secciones anteriores.
 - Se comprobo el desbordamiento de `int` con 4.999 cables de costo 1.000.000,
   que suman 4.999.000.000: por encima del rango de `int` y por eso el acumulado
   es `long`.
-- La Mision 3 (nuestra implementacion de Floyd-Warshall y Bellman-Ford) se
-  contrasto contra una referencia escrita por fuerza bruta (enumerando ciclos
-  simples para decidir el caso infinito y caminos simples para el maximo)
-  sobre 400 grafos aleatorios: cero discrepancias y cero desacuerdos entre
+- La Mision 3 (Floyd-Warshall y Bellman-Ford) se contrasto contra una
+  referencia escrita por fuerza bruta (enumerando ciclos simples para
+  decidir el caso infinito y caminos simples para el maximo) sobre 400
+  grafos aleatorios: cero discrepancias y cero desacuerdos entre
   Floyd-Warshall y Bellman-Ford. Ademas paso el test automatizado
   `FLOYDWARSHALL_BELLMANFORD_TEST` con los tres casos del enunciado
   (110, Infinite churun!, -65).
@@ -303,8 +350,8 @@ problemas en codigo escrito por otros integrantes:
 ---
 
 *Nota: este documento fue redactado con ayuda de Claude a partir del
-historial real de las tres sesiones de trabajo. El equipo debe revisarlo,
-completar los aprendizajes personales, y verificar que coincida con lo
-que efectivamente pueden defender en la sustentacion oral (seccion 8.2):
-un reporte que no coincida con lo que pasa en la defensa se califica como
-deshonestidad academica.*
+historial real de las sesiones de trabajo. El equipo debe revisarlo,
+completar los aprendizajes personales pendientes, y verificar que coincida
+con lo que efectivamente pueden defender en la sustentacion oral (seccion
+8.2): un reporte que no coincida con lo que pasa en la defensa se califica
+como deshonestidad academica.*
