@@ -348,10 +348,3 @@ problemas en codigo escrito por otros integrantes:
    100.000. Se deja documentado como riesgo conocido, no como defecto.
 
 ---
-
-*Nota: este documento fue redactado con ayuda de Claude a partir del
-historial real de las sesiones de trabajo. El equipo debe revisarlo,
-completar los aprendizajes personales pendientes, y verificar que coincida
-con lo que efectivamente pueden defender en la sustentacion oral (seccion
-8.2): un reporte que no coincida con lo que pasa en la defensa se califica
-como deshonestidad academica.*
