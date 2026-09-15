@@ -383,16 +383,17 @@ public final class Input {
             // N: cuantas intersecciones tiene la red de este caso.
             int nodos = lector.siguienteEntero("N (cantidad de intersecciones) del caso " + caso);
 
-            // El enunciado garantiza N >= 1. Si llega otra cosa, es entrada corrupta.
-            if (nodos < 1) {
-                throw new EEntradaInvalida("N debe ser al menos 1 en el caso " + caso + ", pero se leyo: " + nodos);
+            // El enunciado garantiza 1 <= N <= 10000. Si llega otra cosa, es entrada corrupta.
+            if (nodos < 1 || nodos > 10000) {
+                throw new EEntradaInvalida("N debe estar entre 1 y 10000 en el caso " + caso + ", pero se leyo: " + nodos);
             }
 
-            // C: cuantos cables disponibles hay. Puede ser 0 (red sin ningun cable).
+            // C: cuantos cables disponibles hay. Puede ser 0 (red sin ningun cable),
+            // pero nunca mas de 100000, segun el enunciado.
             int cables = lector.siguienteEntero("C (cantidad de cables) del caso " + caso);
 
-            if (cables < 0) {
-                throw new EEntradaInvalida("C no puede ser negativo en el caso " + caso + ", pero se leyo: " + cables);
+            if (cables < 0 || cables > 100000) {
+                throw new EEntradaInvalida("C debe estar entre 0 y 100000 en el caso " + caso + ", pero se leyo: " + cables);
             }
 
             // Grafo NO dirigido: un cable se puede recorrer en los dos sentidos.
@@ -412,9 +413,9 @@ public final class Input {
                 validarInterseccion(hasta, nodos, i, caso);
 
                 // En la mision 4 los costos son no negativos (0 <= costo <= 1.000.000).
-                if (costo < 0) {
+                if (costo < 0 || costo > 1000000) {
                     throw new EEntradaInvalida("El costo del cable " + i + " (caso " + caso
-                            + ") no puede ser negativo: " + costo);
+                            + ") debe estar entre 0 y 1000000: " + costo);
                 }
 
                 // Aqui ocurre la traduccion 1..N -> 0..N-1.
