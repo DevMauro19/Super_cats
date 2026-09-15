@@ -1,137 +1,182 @@
 # Super Cats — The Feline Graph Chronicles
 
-Proyecto final del curso Lenguajes y Compiladores — Universidad EIA.
-Cuatro misiones basadas en grafos (BFS/DFS, Dijkstra, Floyd-Warshall + Bellman-Ford y Kruskal) resueltas en Java, con una GUI temática inspirada en Pola, Minerva y el villano Limon.
+Proyecto final del curso de Lenguajes y Compiladores — Universidad EIA.
+
+La aplicación implementa cuatro misiones basadas en grafos y caminos mínimos sobre Java Swing, con una interfaz moderna inspirada en tonos negros, naranjas y blancos, buscando una estética temática de gatos y de la historia del proyecto: Pola, Minerva y Limon.
 
 ## Integrantes del grupo
 
+- Carlos Mauricio Velasco Chavarro
+- Santiago Perez
+- Pablo Escudero
 
-- [Carlos Mauricio Velasco Chavarro]
-- [Santiago Perez]
-- [Pablo Escudero]
+## Estado actual del proyecto
+
+El proyecto ya tiene una interfaz gráfica funcional en `src/gui/MainFrame.java`, con estas funcionalidades principales:
+
+- pestañas para las 4 misiones,
+- carga de ejemplos por misión,
+- entrada personalizada del usuario,
+- ejecución del algoritmo y presentación del resultado,
+- vista previa visual del grafo o la grilla,
+- mini pantalla de evolución para observar cómo se construyen los caminos o recorridos paso a paso,
+- tema visual oscuro con paleta negra/naranja/blanca y componentes personalizados.
+
+La GUI cumple con la idea de poder probar casos de prueba incluidos y entradas personalizadas, además de mostrar varios grafos y mapas en una pequeña pantalla de evolución visual.
 
 ## Cómo compilar y ejecutar
 
-> Para compilar el proyecto debe hacerse de la siguiente manera, primero clonaremos el proyecto y después ejecutaremos el mainFrame.java
+La forma recomendada es abrir el proyecto en IntelliJ IDEA y ejecutar la clase:
 
-## Estructura del proyecto 
+- `gui.MainFrame`
+
+También puede ejecutarse desde la línea de comandos si se compila el proyecto Java completo, por ejemplo desde la raíz del repositorio:
+
+```bash
+javac -d out $(find src -name "*.java")
+java -cp out gui.MainFrame
+```
+
+En Windows, si se usa un entorno de consola, la opción más fiable es compilar desde el IDE o desde una terminal con Java configurado correctamente.
+
+## Estructura del proyecto
 
 ```text
 src/
 ├── algorithms/
 │   ├── mission1/       BFSDFSSolver.java, PathResult.java
-│   ├── mission2/       Dijkstra.java
-│   ├── mission3/       BellmanFord.java, FloydWarshall.java
+│   ├── mission2/       Dijkstra.java, DijkstraResult.java
+│   ├── mission3/       BellmanFord.java, FloydWarshall.java, Mission3Solver.java
 │   └── mission4/       Kruskal.java, Union.java
 ├── Exceptions/
-│   ├── EEntradaInvalida.java   (checked — errores de formato de entrada)
-│   ├── EFueraRango.java        (unchecked — invariante interno del modelo)
-│   └── ENumeroNegativo.java    (checked — invariante interno del modelo)
+│   ├── EEntradaInvalida.java
+│   ├── EFueraRango.java
+│   └── ENumeroNegativo.java
 ├── gui/
 │   └── MainFrame.java
-├── images/
-│   └── rescuecat.jpg        (imagen para el README.md)
 ├── io/
-│   ├── Input.java          Parser compartido: un método leerMisionN por misión
-│   ├── MisionDosCaso.java  Contenedor para caso de Misión 2
-│   ├── MisionTresCaso.java Contenedor para caso de Misión 3
-│   ├── MisionUnoCaso.java  Contenedor (Grid, inicio, destino) para un caso de Misión 1
-│   └── Output.java         Formateador de salida: un método formatearMisionN por misión
+│   ├── Input.java
+│   ├── MisionUnoCaso.java
+│   ├── MisionDosCaso.java
+│   ├── MisionTresCaso.java
+│   ├── Output.java
+│   └── ...
 ├── model/
-│   ├── Edge.java           Arista dirigida dentro de la lista de adyacencia de Graph
-│   ├── Graph.java          Grafo genérico (dirigido o no), reutilizado en Misiones 2, 3 y 4
-│   ├── Grid.java           Grilla con bombas, usada solo en Misión 1
-│   ├── Punto.java          Coordenada (fila, columna) inmutable, usada en Misión 1
-│   └── WeightedEdge.java   Arista plana (from, to, weight), para Kruskal y Bellman-Ford
-└── test/
-    ├── BFS_DFS_TEST.java
-    ├── DIJKSTRA_TEST.java
-    ├── FLOYDWARSHALL_BELLMANFORD_TEST.java
-    └── KRUSKAL_TEST.java
+│   ├── Edge.java
+│   ├── Graph.java
+│   ├── Grid.java
+│   ├── Punto.java
+│   └── WeightedEdge.java
+├── test/
+│   ├── BFS_DFS_TEST.java
+│   ├── DIJKSTRA_TEST.java
+│   ├── FLOYDWARSHALL_BELLMANFORD_TEST.java
+│   └── KRUSKAL_TEST.java
+└── images/
+    └── rescuecat.jpg
 ```
 
-## Clases más importantes y qué hacen
+## Misión 1: BFS / DFS sobre grilla
+
+La misión 1 se resuelve con `BFSDFSSolver` y `PathResult`.
+
+- Implementa búsqueda en amplitud (BFS) y profundidad (DFS).
+- Maneja una grilla con bombas.
+- Se evita recursion profunda en DFS para soportar grillas grandes sin `StackOverflowError`.
+- El orden de vecinos se mantiene fijo para asegurar resultados deterministas.
+- La salida se integra con `io.Input` y `io.Output` y se presenta en la GUI.
+
+## Misión 2: Dijkstra
+
+La misión 2 calcula rutas mínimas con pesos no negativos.
+
+- Se usa la estructura genérica `Graph`.
+- `DijkstraResult` guarda el camino encontrado y su costo total.
+- La GUI permite cargar ejemplos y visualizar el camino resultante en el grafo.
+
+## Misión 3: Floyd-Warshall y Bellman-Ford
+
+La misión 3 resuelve los casos de rutas entre todos los pares y la detección de ciclos negativos.
+
+- `FloydWarshall` calcula distancias mínimas entre cualquier par de nodos.
+- `BellmanFord` detecta ciclos negativos y valida relajar caminos.
+- `Mission3Solver` centraliza la resolución según la entrada.
+
+## Misión 4: Kruskal
+
+La misión 4 implementa el árbol de expansión mínima con `Kruskal` y `Union`.
+
+- Ordena las aristas por peso.
+- Selecciona las aristas válidas sin formar ciclos.
+- Produce el resultado final en formato legible para la GUI.
+
+## Componentes clave del proyecto
 
 ### `model.Graph`
-Es el corazón del proyecto para las misiones 2, 3 y 4. Mantiene la estructura del grafo y sincroniza dos representaciones:
+Es el modelo común para las misiones 2, 3 y 4.
 
-- lista de adyacencia para recorridos por nodo (`Edge`)
-- lista plana de aristas para algoritmos globales (`WeightedEdge`)
+Mantiene:
 
-Esto permite reutilizar el mismo modelo para Dijkstra, Floyd-Warshall, Bellman-Ford y Kruskal sin crear grafos distintos para cada algoritmo.
+- lista de adyacencia para recorridos por nodos,
+- estructura de aristas planas para algoritmos globales,
+- soporte a grafos dirigidos y no dirigidos.
 
-### `model.Grid`
-Representa la grilla de la misión 1. Guarda las dimensiones y el conjunto de celdas con bombas. Permite validar si una posición es válida y si es transitable. Es un modelo orientado a la geometría del mapa, no al perfil de un algoritmo de caminos.
+### `model.Grid` y `model.Punto`
+Representan la grilla de la misión 1.
 
-### `model.Punto`
-Encapsula una coordenada `(fila, columna)` para la misión 1. Sirve para representar ubicaciones de inicio, destino y cualquier celda accesible en la grilla.
+- `Grid` guarda dimensiones y celdas con bombas.
+- `Punto` encapsula coordenadas `(fila, columna)`.
+- Esto ayuda a representar mapa, inicio, destino y recorrido sin duplicar lógica.
 
-### `model.Edge` y `model.WeightedEdge`
-Son las aristas del grafo. `Edge` describe conexiones de vecinos para recorridos por lista de adyacencia, mientras que `WeightedEdge` conserva `(from, to, weight)` como una estructura más útil para ordenamiento y relajación de costos.
+### `io.Input` y `io.Output`
+Son el canal de entrada y salida del sistema.
 
-### `algorithms.mission1.BFSDFSSolver`
-Resuelve la misión de rescate de Nina. Implementa BFS y DFS sobre una grilla sin construir una lista de adyacencia explícita, calculando los vecinos al vuelo para evitar gastar memoria con millones de nodos. Es la clase central de la misión 1.
-
-### `algorithms.mission2.Dijkstra`
-Calcula el camino mínimo con pesos no negativos. Se apoya en la representación del `Graph` y en la estructura de adyacencia para relajación de costos.
-
-### `algorithms.mission3.FloydWarshall` y `BellmanFord`
-Son las soluciones para rutas entre todos los pares y para detectar ciclos negativos. Cada una usa la misma abstracción del grafo, pero con diferentes enfoques. `FloydWarshall` trabaja con matriz de distancias; `BellmanFord` relaja todas las aristas repetidas veces.
-
-### `algorithms.mission4.Kruskal` y `Union`
-Se encargan del árbol de expansión mínima. `Kruskal` ordena todas las aristas y selecciona las mejores que no formen ciclos; `Union` aporta la lógica de unión de componentes para verificar si dos nodos están conectados.
-
-### `io.Input`
-Es el punto de entrada para interpretar texto plano del usuario o de pruebas. Lee tokens, valida el formato y construye los casos de prueba de cada misión. Es la clase encargada de convertir texto en objetos del dominio.
-
-### `io.Output`
-Formatea la salida final para cada misión. En lugar de duplicar la lógica en cada algoritmo, centraliza la representación textual de los resultados y mantiene la estructura consistente para la GUI o la consola.
-
-### `io.MisionUnoCaso`, `MisionDosCaso`, `MisionTresCaso`
-Son contenedores de cada caso específico. Guardan la entrada ya transformada a objetos reutilizables para cada misión (grillas, grafos, nodos de origen y destino).
-
-### `exceptions.*`
-Encapsulan todas las fallas de validación del programa. Se separan por tipo de error:
-
-- `EEntradaInvalida`: texto mal formado, tokens faltantes o fuera de rango durante parsing.
-- `ENumeroNegativo`: se lanza cuando un valor numérico no puede ser negativo por invariante del modelo.
-- `EFueraRango`: protege índices o nodos no válidos dentro de una estructura como `Graph` o `Grid`.
+- `Input` lee texto, valida formato y genera casos de prueba.
+- `Output` formatea los resultados para consola o GUI.
+- La misma estructura se reutiliza entre misiones para mantener consistencia.
 
 ### `gui.MainFrame`
-Es la ventana principal de la interfaz gráfica. Aquí se debería conectar la entrada del usuario, la selección de misión, el procesamiento de datos y la visualización de resultados.
+Es la pieza más visible del proyecto.
 
-## Decisiones de diseño tomadas
+Incluye:
 
-- `Graph` único y genérico para las Misiones 2, 3 y 4.
+- 4 pestañas de misión,
+- panel de entrada para probar casos personalizados,
+- panel de salida para ver resultados,
+- `GraphPreviewPanel` para visualizar el estado del problema,
+- animaciones de recorrido o relajación según la misión,
+- tema visual oscuro con esquema negro/orange/blanco.
 
-  Se construye como `Graph(int nodeCount, boolean directed)`, en vez de crear un grafo por misión. Mantiene dos vistas internas sincronizadas:
+## Tests del proyecto
 
-  - lista de adyacencia para recorridos por nodo
-  - lista plana de aristas para algoritmos que iteren sobre todas las aristas
+En `src/test` hay pruebas de referencia para cada algoritmo principal:
 
-- `Grid` y `Punto` separados de `Graph` para la Misión 1.
+- `BFS_DFS_TEST.java`
+- `DIJKSTRA_TEST.java`
+- `FLOYDWARSHALL_BELLMANFORD_TEST.java`
+- `KRUSKAL_TEST.java`
 
-  La grilla puede llegar a 10^6 celdas, así que los vecinos se calculan al vuelo a partir de `(fila, columna)` en vez de materializar una lista de adyacencia explícita, ahorrando memoria.
+Estos tests validan el comportamiento correcto de los algoritmos y sirven como referencia durante la ejecución y la evaluación del proyecto.
 
-- DFS no recursivo en `BFSDFSSolver`.
+## Cambios recientes incorporados
 
-  Simula el call stack manualmente para reproducir el orden de visita requerido por el enunciado y evitar `StackOverflowError` en grillas grandes.
+- Se actualizó la interfaz a un diseño oscuro y más pulido.
+- Se agregaron botones para cargar ejemplo, ejecutar y limpiar.
+- Se habilitó la visualización de casos personalizados por misión.
+- Se integró una mini pantalla de evolución para observar la construcción visual del problema.
+- Se mejoró la experiencia general del usuario en la GUI, manteniendo la estética de gato y la identidad del proyecto.
+- La aplicación ya no es solo una herramienta de consola: ahora funciona como una interfaz gráfica completa para validar algoritmos.
 
-- Estructuras internas con arreglos primitivos.
+## Recomendación de uso
 
-  En lugar de `HashSet<Punto>` o `HashMap<Punto, Punto>`, se usan `boolean[]` y `int[]` indexados con `fila * columnas + columna`, según convenga, para reducir el costo de boxing y mejorar el rendimiento.
+Para probar la solución, se recomienda:
 
-- Excepciones en dos capas.
+1. Seleccionar una misión.
+2. Cargar el ejemplo del sistema o escribir una entrada personalizada.
+3. Ejecutar la misión.
+4. Revisar la salida y la vista previa del mapa o grafo.
+5. Usar la mini pantalla para comprender cómo avanza la exploración o el cálculo del algoritmo.
 
-  - `ENumeroNegativo` y `EFueraRango` protegen invariantes del modelo.
-  - `EEntradaInvalida` protege el texto entrante desde la GUI y debe ser capturada explícitamente para mostrar un mensaje legible.
-
-- Un solo `Input` y un solo `Output` para todas las misiones.
-
-  Cada misión agrega su método estático (`leerMisionN` / `formatearMisionN`) reutilizando el mismo tokenizador. Esto mantiene el parser centralizado y evita duplicación.
-
-## Al menos un test por algoritmo
-
-En `src/test` se encuentran pruebas de referencia para los algoritmos principales. Actualmente `BFS_DFS_TEST.java` cubre BFS y DFS de la misión 1 contra el ejemplo del enunciado (`BFS 18 DFS 32`). Los demás archivos (`DIJKSTRA_TEST`, `FLOYDWARSHALL_BELLMANFORD_TEST`, `KRUSKAL_TEST`) cuentan con casos reales y verificables.
+## Referecia de Carlitos :)
 
 ![Rescue Cat](src/images/rescuecat.jpg)
