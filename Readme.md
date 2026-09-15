@@ -1,182 +1,390 @@
-# Super Cats — The Feline Graph Chronicles
+# 🐈 Super Cats — The Feline Graph Chronicles
 
-Proyecto final del curso de Lenguajes y Compiladores — Universidad EIA.
+> 🐾 **Proyecto final del curso de Lenguajes y Compiladores — Universidad EIA.**
 
-La aplicación implementa cuatro misiones basadas en grafos y caminos mínimos sobre Java Swing, con una interfaz moderna inspirada en tonos negros, naranjas y blancos, buscando una estética temática de gatos y de la historia del proyecto: Pola, Minerva y Limon.
+Una aventura felina a través de **grafos, caminos mínimos y algoritmos de optimización**.  
+La aplicación combina algoritmos clásicos con una interfaz gráfica interactiva inspirada en los protagonistas de nuestra historia: **Pola, Minerva y Limon**. 🐱🐱🐱
 
-## Integrantes del grupo
+---
 
-- Carlos Mauricio Velasco Chavarro
-- Santiago Perez
-- Pablo Escudero
+## 👥 Integrantes del grupo
 
-## Estado actual del proyecto
+| 🐱 Integrantes                     |
+|------------------------------------|
+| Carlos Mauricio Velasco Chavarro🦖 |
+| Santiago Perez                     |
+| Pablo Escudero                     |
 
-El proyecto ya tiene una interfaz gráfica funcional en `src/gui/MainFrame.java`, con estas funcionalidades principales:
+---
 
-- pestañas para las 4 misiones,
-- carga de ejemplos por misión,
-- entrada personalizada del usuario,
-- ejecución del algoritmo y presentación del resultado,
-- vista previa visual del grafo o la grilla,
-- mini pantalla de evolución para observar cómo se construyen los caminos o recorridos paso a paso,
-- tema visual oscuro con paleta negra/naranja/blanca y componentes personalizados.
+## 🎯 Estado actual del proyecto
 
-La GUI cumple con la idea de poder probar casos de prueba incluidos y entradas personalizadas, además de mostrar varios grafos y mapas en una pequeña pantalla de evolución visual.
+La aplicación cuenta con una **interfaz gráfica funcional en `src/gui/MainFrame.java`** y permite ejecutar y visualizar las cuatro misiones del proyecto.
 
-## Cómo compilar y ejecutar
+### ✨ Funcionalidades principales
 
-La forma recomendada es abrir el proyecto en IntelliJ IDEA y ejecutar la clase:
+- 🗂️ **Pestañas** para las 4 misiones.
+- 📥 **Carga de ejemplos** por misión.
+- ✏️ **Entrada personalizada** de casos de prueba.
+- ▶️ **Ejecución de algoritmos** desde la interfaz.
+- 📊 **Presentación visual de resultados**.
+- 🗺️ **Vista previa de grafos y grillas**.
+- 🎬 **Mini pantalla de evolución** para observar los algoritmos paso a paso.
+- 🌙 **Tema oscuro** inspirado en tonos negros, naranjas y blancos.
+- 🐈 **Estética temática de gatos** relacionada con la historia del proyecto.
+- 🧩 **Componentes gráficos personalizados** para mantener una apariencia consistente.
 
-- `gui.MainFrame`
+> 🐾 La GUI transforma el proyecto de una aplicación únicamente orientada a consola en una herramienta visual para **probar, analizar y comprender los algoritmos**.
 
-También puede ejecutarse desde la línea de comandos si se compila el proyecto Java completo, por ejemplo desde la raíz del repositorio:
+---
+
+# 🚀 Cómo compilar y ejecutar
+
+La forma recomendada de ejecutar el proyecto es mediante **IntelliJ IDEA**.
+
+### 💻 Desde IntelliJ IDEA
+
+Abrir el proyecto y ejecutar:
+
+```text
+gui.MainFrame
+```
+
+### 🖥️ Desde la terminal
+
+Desde la raíz del repositorio se puede compilar el proyecto Java completo:
 
 ```bash
 javac -d out $(find src -name "*.java")
+```
+
+Y posteriormente ejecutar:
+
+```bash
 java -cp out gui.MainFrame
 ```
 
-En Windows, si se usa un entorno de consola, la opción más fiable es compilar desde el IDE o desde una terminal con Java configurado correctamente.
+> ⚠️ En Windows, la opción más fiable es ejecutar el proyecto desde IntelliJ IDEA o utilizar una terminal con Java correctamente configurado.
 
-## Estructura del proyecto
+---
+
+# 📁 Estructura del proyecto
 
 ```text
 src/
-├── algorithms/
+├── 🧠 algorithms/
 │   ├── mission1/       BFSDFSSolver.java, PathResult.java
 │   ├── mission2/       Dijkstra.java, DijkstraResult.java
-│   ├── mission3/       BellmanFord.java, FloydWarshall.java, Mission3Solver.java
+│   ├── mission3/       BellmanFord.java, FloydWarshall.java,
+│   │                    Mission3Solver.java
 │   └── mission4/       Kruskal.java, Union.java
-├── Exceptions/
+│
+├── ⚠️ Exceptions/
 │   ├── EEntradaInvalida.java
 │   ├── EFueraRango.java
 │   └── ENumeroNegativo.java
-├── gui/
+│
+├── 🖥️ gui/
 │   └── MainFrame.java
-├── io/
+│
+├── 📥 io/
 │   ├── Input.java
 │   ├── MisionUnoCaso.java
 │   ├── MisionDosCaso.java
 │   ├── MisionTresCaso.java
 │   ├── Output.java
 │   └── ...
-├── model/
+│
+├── 🧩 model/
 │   ├── Edge.java
 │   ├── Graph.java
 │   ├── Grid.java
 │   ├── Punto.java
 │   └── WeightedEdge.java
-├── test/
+│
+├── 🧪 test/
 │   ├── BFS_DFS_TEST.java
 │   ├── DIJKSTRA_TEST.java
 │   ├── FLOYDWARSHALL_BELLMANFORD_TEST.java
 │   └── KRUSKAL_TEST.java
-└── images/
+│
+└── 🖼️ images/
     └── rescuecat.jpg
 ```
 
-## Misión 1: BFS / DFS sobre grilla
+---
 
-La misión 1 se resuelve con `BFSDFSSolver` y `PathResult`.
+# 🗺️ Misiones
 
-- Implementa búsqueda en amplitud (BFS) y profundidad (DFS).
-- Maneja una grilla con bombas.
-- Se evita recursion profunda en DFS para soportar grillas grandes sin `StackOverflowError`.
-- El orden de vecinos se mantiene fijo para asegurar resultados deterministas.
-- La salida se integra con `io.Input` y `io.Output` y se presenta en la GUI.
+La aplicación está dividida en **cuatro misiones**, cada una enfocada en diferentes algoritmos y estructuras de grafos.
 
-## Misión 2: Dijkstra
+| Misión | 🤖 Algoritmos | 🎯 Concepto |
+|---|---|---|
+| 💣 **Misión 1** | BFS / DFS | Recorridos sobre grillas |
+| 🧭 **Misión 2** | Dijkstra | Caminos mínimos |
+| 🔄 **Misión 3** | Floyd-Warshall / Bellman-Ford | Caminos mínimos y ciclos negativos |
+| 🔗 **Misión 4** | Kruskal / Union-Find | Árbol de expansión mínima |
 
-La misión 2 calcula rutas mínimas con pesos no negativos.
+---
 
-- Se usa la estructura genérica `Graph`.
-- `DijkstraResult` guarda el camino encontrado y su costo total.
-- La GUI permite cargar ejemplos y visualizar el camino resultante en el grafo.
+# 💣 Misión 1 — BFS / DFS sobre grilla
 
-## Misión 3: Floyd-Warshall y Bellman-Ford
+La primera misión se resuelve mediante `BFSDFSSolver` y `PathResult`.
 
-La misión 3 resuelve los casos de rutas entre todos los pares y la detección de ciclos negativos.
+### 🔍 Características
 
-- `FloydWarshall` calcula distancias mínimas entre cualquier par de nodos.
-- `BellmanFord` detecta ciclos negativos y valida relajar caminos.
-- `Mission3Solver` centraliza la resolución según la entrada.
+- 🌊 Implementa **Búsqueda en Amplitud (BFS)**.
+- 🕳️ Implementa **Búsqueda en Profundidad (DFS)**.
+- 💣 Maneja una grilla con bombas.
+- 🧱 Evita la recursión profunda en DFS para soportar grillas grandes sin `StackOverflowError`.
+- 🔢 Mantiene un orden fijo de vecinos para garantizar resultados deterministas.
+- 📥 Utiliza `io.Input` para procesar los casos.
+- 📤 Utiliza `io.Output` para formatear los resultados.
+- 🗺️ Permite visualizar la exploración directamente desde la GUI.
 
-## Misión 4: Kruskal
+---
 
-La misión 4 implementa el árbol de expansión mínima con `Kruskal` y `Union`.
+# 🧭 Misión 2 — Dijkstra
 
-- Ordena las aristas por peso.
-- Selecciona las aristas válidas sin formar ciclos.
-- Produce el resultado final en formato legible para la GUI.
+La segunda misión calcula **rutas mínimas con pesos no negativos**.
 
-## Componentes clave del proyecto
+### ⚙️ Características
 
-### `model.Graph`
-Es el modelo común para las misiones 2, 3 y 4.
+- 🕸️ Utiliza la estructura genérica `Graph`.
+- 📏 Calcula el costo mínimo entre nodos.
+- 🧭 `DijkstraResult` almacena:
+  - el camino encontrado,
+  - el costo total.
+- 🎬 La GUI permite visualizar el proceso de Dijkstra.
+- 🟠 El camino final puede visualizarse directamente sobre el grafo.
+
+---
+
+# 🔄 Misión 3 — Floyd-Warshall y Bellman-Ford
+
+La tercera misión combina dos algoritmos clásicos para resolver problemas de caminos mínimos.
+
+### 🌐 Floyd-Warshall
+
+`FloydWarshall` calcula las **distancias mínimas entre cualquier par de nodos**.
+
+### ⚡ Bellman-Ford
+
+`BellmanFord` permite:
+
+- 🔍 Relajar caminos.
+- ♻️ Detectar ciclos negativos.
+- ⚠️ Identificar situaciones donde las distancias no están acotadas.
+
+### 🧠 `Mission3Solver`
+
+`Mission3Solver` centraliza la resolución de los casos de esta misión según la entrada proporcionada.
+
+### 🎬 Visualización
+
+La interfaz muestra las **rondas de relajación** de Bellman-Ford para observar cómo evoluciona el cálculo.
+
+---
+
+# 🔗 Misión 4 — Kruskal
+
+La cuarta misión implementa un **Árbol de Expansión Mínima (MST)** mediante:
+
+- 🌳 `Kruskal`
+- 🔗 `Union` / Union-Find
+
+### ⚙️ Funcionamiento
+
+1. 📊 Ordena las aristas por peso.
+2. 🔍 Evalúa cada arista.
+3. ✅ Selecciona las aristas que no forman ciclos.
+4. ❌ Rechaza las aristas que generarían un ciclo.
+5. 🌳 Construye el árbol de expansión mínima.
+6. 📤 Presenta el resultado final.
+
+La GUI permite observar el proceso de evaluación de las aristas **paso a paso**. 🎬
+
+---
+
+# 🧩 Componentes clave del proyecto
+
+## 🕸️ `model.Graph`
+
+Es el modelo común utilizado principalmente por las misiones **2, 3 y 4**.
 
 Mantiene:
 
-- lista de adyacencia para recorridos por nodos,
-- estructura de aristas planas para algoritmos globales,
-- soporte a grafos dirigidos y no dirigidos.
+- 📋 Lista de adyacencia para recorridos por nodos.
+- 🔗 Estructura de aristas planas para algoritmos globales.
+- ↔️ Soporte para grafos dirigidos y no dirigidos.
 
-### `model.Grid` y `model.Punto`
-Representan la grilla de la misión 1.
+---
 
-- `Grid` guarda dimensiones y celdas con bombas.
-- `Punto` encapsula coordenadas `(fila, columna)`.
-- Esto ayuda a representar mapa, inicio, destino y recorrido sin duplicar lógica.
+## 🗺️ `model.Grid` y `model.Punto`
 
-### `io.Input` y `io.Output`
-Son el canal de entrada y salida del sistema.
+Representan la grilla utilizada en la **Misión 1**.
 
-- `Input` lee texto, valida formato y genera casos de prueba.
-- `Output` formatea los resultados para consola o GUI.
-- La misma estructura se reutiliza entre misiones para mantener consistencia.
+### `Grid`
 
-### `gui.MainFrame`
-Es la pieza más visible del proyecto.
+- 📐 Guarda las dimensiones.
+- 💣 Representa las celdas con bombas.
+
+### `Punto`
+
+- 📍 Encapsula las coordenadas `(fila, columna)`.
+- 🧭 Permite representar inicio, destino y recorridos.
+
+Esto evita duplicar lógica relacionada con las coordenadas dentro de los algoritmos.
+
+---
+
+## 📥 `io.Input` y `io.Output`
+
+Son los componentes encargados de la comunicación de entrada y salida.
+
+### 📥 `Input`
+
+- Lee el texto introducido.
+- 🔍 Valida el formato.
+- 🧩 Genera los casos de prueba.
+
+### 📤 `Output`
+
+- Formatea los resultados.
+- 🖥️ Permite reutilizar la salida tanto en consola como en la GUI.
+
+La estructura se reutiliza entre las diferentes misiones para mantener consistencia.
+
+---
+
+# 🖥️ `gui.MainFrame`
+
+Es el componente principal de la interfaz gráfica.
 
 Incluye:
 
-- 4 pestañas de misión,
-- panel de entrada para probar casos personalizados,
-- panel de salida para ver resultados,
-- `GraphPreviewPanel` para visualizar el estado del problema,
-- animaciones de recorrido o relajación según la misión,
-- tema visual oscuro con esquema negro/orange/blanco.
+- 🐈 4 pestañas de misión.
+- 📥 Panel de entrada.
+- 📤 Panel de resultados.
+- 🗺️ Visualización de mapas y grafos.
+- 🎬 Animaciones de los algoritmos.
+- ▶️ Botones de ejecución.
+- 🔄 Controles para las animaciones.
+- 🌙 Tema visual oscuro.
+- 🟠 Esquema de colores negro, naranja y blanco.
+- 🐾 Identidad visual inspirada en gatos.
 
-## Tests del proyecto
+---
 
-En `src/test` hay pruebas de referencia para cada algoritmo principal:
+# 🧪 Tests del proyecto
 
-- `BFS_DFS_TEST.java`
-- `DIJKSTRA_TEST.java`
-- `FLOYDWARSHALL_BELLMANFORD_TEST.java`
-- `KRUSKAL_TEST.java`
+En `src/test` se encuentran pruebas de referencia para los algoritmos principales.
 
-Estos tests validan el comportamiento correcto de los algoritmos y sirven como referencia durante la ejecución y la evaluación del proyecto.
+### 🔬 Pruebas disponibles
 
-## Cambios recientes incorporados
+- 🧪 `BFS_DFS_TEST.java`
+- 🧪 `DIJKSTRA_TEST.java`
+- 🧪 `FLOYDWARSHALL_BELLMANFORD_TEST.java`
+- 🧪 `KRUSKAL_TEST.java`
 
-- Se actualizó la interfaz a un diseño oscuro y más pulido.
-- Se agregaron botones para cargar ejemplo, ejecutar y limpiar.
-- Se habilitó la visualización de casos personalizados por misión.
-- Se integró una mini pantalla de evolución para observar la construcción visual del problema.
-- Se mejoró la experiencia general del usuario en la GUI, manteniendo la estética de gato y la identidad del proyecto.
-- La aplicación ya no es solo una herramienta de consola: ahora funciona como una interfaz gráfica completa para validar algoritmos.
+Estos tests permiten validar el comportamiento de los algoritmos y sirven como referencia durante el desarrollo y la evaluación del proyecto.
 
-## Recomendación de uso
+---
 
-Para probar la solución, se recomienda:
+# ✨ Cambios recientes incorporados
 
-1. Seleccionar una misión.
-2. Cargar el ejemplo del sistema o escribir una entrada personalizada.
-3. Ejecutar la misión.
-4. Revisar la salida y la vista previa del mapa o grafo.
-5. Usar la mini pantalla para comprender cómo avanza la exploración o el cálculo del algoritmo.
+- 🎨 Actualización completa de la interfaz a un diseño oscuro.
+- 🟠 Incorporación de una paleta basada en negro, naranja y blanco.
+- 🐈 Integración de la temática de gatos.
+- ▶️ Botones para **Cargar ejemplo**, **Ejecutar** y **Limpiar**.
+- ✏️ Soporte para casos personalizados.
+- 🗺️ Visualización de mapas y grafos.
+- 🎬 Mini pantalla de evolución.
+- ⏯️ Controles de reproducción y velocidad de las animaciones.
+- 🧠 Visualización del avance de los algoritmos.
+- 🖥️ Integración completa de los algoritmos con la GUI.
+- 🧩 Componentes gráficos personalizados para mantener la identidad visual.
+- 🐾 La aplicación dejó de ser únicamente una herramienta de consola y ahora funciona como una interfaz gráfica completa para probar los algoritmos.
 
-## Referecia de Carlitos :)
+---
 
-![Rescue Cat](src/images/rescuecat.jpg)
+# 🎮 Recomendación de uso
+
+Para probar una misión:
+
+```text
+       🐈
+        │
+        ▼
+  1️⃣ Seleccionar misión
+        │
+        ▼
+  2️⃣ Cargar ejemplo
+        │
+        ▼
+  3️⃣ Ejecutar ▶️
+        │
+        ├───────────────┐
+        ▼               ▼
+   📤 Resultado      🗺️ Visualización
+        │               │
+        └───────┬───────┘
+                ▼
+        🎬 Evolución
+```
+
+### 🐾 Flujo recomendado
+
+1. 🗂️ **Seleccionar una misión.**
+2. 📥 **Cargar el ejemplo** del sistema o introducir un caso personalizado.
+3. ▶️ **Ejecutar la misión.**
+4. 📤 Revisar el **resultado**.
+5. 🗺️ Observar el **mapa o grafo** generado.
+6. 🎬 Utilizar la **mini pantalla de evolución** para comprender cómo avanza el algoritmo.
+
+---
+
+# 🐱 Nuestros protagonistas
+
+La historia de **Super Cats** está acompañada por nuestros tres personajes principales:
+
+> 🐈 **Pola**  
+> 🐈 **Minerva**  
+> 🐈 **Limon**
+
+Ellos acompañan las diferentes misiones mientras los algoritmos recorren grafos, buscan caminos y construyen soluciones. 🧭🕸️
+
+---
+
+# 🖼️ Referencia de Carlitos :)
+
+<p align="center">
+  <img src="src/images/rescuecat.jpg" alt="Rescue Cat" width="400">
+</p>
+
+🐾 *Porque ningún proyecto de Super Cats estaría completo sin un gato de referencia.*
+
+---
+
+## 🐈‍⬛ Super Cats
+
+```text
+     /\_/\\
+    ( o.o )
+     > ^ <
+
+  THE FELINE GRAPH
+      CHRONICLES
+```
+
+### 🧠 Algorithms + 🐈 Cats = ❤️
+
+---
+
+<p align="center">
+
+**🐾 Super Cats — The Feline Graph Chronicles 🐾**
+
+*Universidad EIA · Lenguajes y Compiladores*
+
+</p>
