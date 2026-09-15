@@ -1,5 +1,4 @@
-
-        package gui;
+package gui;
 
 import Exceptions.EEntradaInvalida;
 import Exceptions.ENumeroNegativo;
@@ -49,9 +48,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
-
-        public class MainFrame extends JFrame {
+public class MainFrame extends JFrame {
 
     // ---- Theme palette -------------------------------------------------
     private static final Color BG_DARK = new Color(18, 18, 18);
@@ -61,7 +58,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
     private static final Color ORANGE = new Color(255, 140, 32);
     private static final Color ORANGE_SOFT = new Color(245, 176, 76);
     private static final Color WHITE = new Color(245, 245, 245);
-    private static final Color MUTED = new Color(160, 160, 160);
+    private static final Color MUTED = new Color(180, 180, 180);
     private static final Color CAT_BLACK = new Color(20, 20, 20);
     private static final Color CAT_RED = new Color(145, 36, 18);
     private static final Color CAT_GREEN = new Color(96, 167, 82);
@@ -74,8 +71,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
     private static final Font FONT_MONO_OUT = new Font("Consolas", Font.PLAIN, 12);
     private static final Font FONT_BTN = new Font("Segoe UI", Font.BOLD, 12);
 
-    // Icons are drawn with Java2D instead of emoji fonts. This avoids the
-    // empty-square glyphs that can appear with Swing/Segoe UI on Windows.
     private static final int[] MISSION_ICON_TYPES = {0, 1, 2, 3};
     private static final String[] MISSION_NAMES = {"Campo minado", "Cuentas Claude", "Reserva de churun", "Reconexión"};
 
@@ -88,7 +83,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ignored) {
-                // Ignored, we keep the default Swing look.
             }
             MainFrame frame = new MainFrame();
             frame.setVisible(true);
@@ -124,8 +118,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         setLocationRelativeTo(null);
     }
 
-    /** Makes scrollbars, tooltips and titled borders readable on a dark theme,
-     *  regardless of what the native Look & Feel decides to do with them. */
     private void configureUiManagerDefaults() {
         UIManager.put("TitledBorder.titleColor", ORANGE_SOFT);
         UIManager.put("ToolTip.background", PANEL_LIGHT);
@@ -176,6 +168,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         return bar;
     }
 
+
     private void selectMission(int missionId) {
         missionCardLayout.show(missionCards, "mission" + missionId);
         for (Map.Entry<Integer, TabButton> entry : tabButtons.entrySet()) {
@@ -220,7 +213,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         left.add(outputPanel, BorderLayout.SOUTH);
 
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, preview);
-        split.setResizeWeight(0.6);
+        split.setResizeWeight(0.45);
         split.setDividerSize(10);
         split.setBorder(null);
         split.setOpaque(false);
@@ -299,14 +292,15 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     if (casos2.isEmpty()) {
                         sb2.append("No se encontraron casos de prueba.");
                     } else {
+                        List<DijkstraResult> resultados2 = new ArrayList<>();
                         for (int i = 0; i < casos2.size(); i++) {
                             MisionDosCaso caso = casos2.get(i);
                             DijkstraResult result = Dijkstra.resolver(caso.getGrafo(), caso.getOrigen(), caso.getDestino());
+                            resultados2.add(result);
                             sb2.append(Output.formatearMision2(i + 1, result)).append(System.lineSeparator());
-                            if (i == 0) {
-                                preview.showMission2(caso.getGrafo(), caso.getOrigen(), caso.getDestino(), result);
-                            }
                         }
+                        // Enviar todos los casos a la vista previa
+                        preview.showMission2Casos(casos2, resultados2);
                     }
                     outputArea.setText(sb2.toString());
                     break;
@@ -317,14 +311,15 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     if (casos3.isEmpty()) {
                         sb3.append("No se encontraron casos de prueba.");
                     } else {
+                        List<Mission3Result> resultados3 = new ArrayList<>();
                         for (int i = 0; i < casos3.size(); i++) {
                             MisionTresCaso caso = casos3.get(i);
                             Mission3Result result = Mission3Solver.resolver(caso.getGrafo(), caso.getOrigen(), caso.getDestino());
+                            resultados3.add(result);
                             sb3.append(Output.formatearMision3(i + 1, result)).append(System.lineSeparator());
-                            if (i == 0) {
-                                preview.showMission3(caso.getGrafo(), caso.getOrigen(), caso.getDestino(), result);
-                            }
                         }
+                        // Enviar la lista de casos completa
+                        preview.showMission3Casos(casos3, resultados3);
                     }
                     outputArea.setText(sb3.toString());
                     break;
@@ -378,10 +373,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         return button;
     }
 
-    // ---- Themed components ---------------------------------------------
-
-    /** Flat, rounded button that is reliably dark-themed on every platform,
-     *  instead of depending on the native L&F to respect setBackground(). */
     private static final class ThemedButton extends JButton {
         private final boolean primary;
         private boolean hover = false;
@@ -430,10 +421,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         }
     }
 
-    /**
-     * Small vector icon for the mission tabs. Everything is painted with
-     * Java2D, so it does not depend on an emoji font being installed.
-     */
     private static final class MissionIcon implements Icon {
         private final int type;
         private Color color;
@@ -468,13 +455,13 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             int cy = y + 11;
 
             switch (type) {
-                case 0: // Bomb
+                case 0:
                     g2.fill(new Ellipse2D.Double(x + 4, y + 7, 13, 13));
                     g2.draw(new Line2D.Double(x + 14, y + 7, x + 18, y + 3));
                     g2.draw(new Line2D.Double(x + 18, y + 3, x + 20, y + 4));
                     break;
 
-                case 1: // Map
+                case 1:
                     g2.drawRoundRect(x + 2, y + 4, 18, 15, 2, 2);
                     g2.drawLine(x + 8, y + 4, x + 8, y + 19);
                     g2.drawLine(x + 14, y + 4, x + 14, y + 19);
@@ -482,7 +469,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     g2.draw(new Line2D.Double(cx, cy + 2, cx, cy + 6));
                     break;
 
-                case 2: // Cup / reservation
+                case 2:
                     g2.drawRoundRect(x + 4, y + 5, 12, 13, 2, 2);
                     g2.drawArc(x + 14, y + 7, 7, 8, -90, 180);
                     g2.drawLine(x + 3, y + 19, x + 18, y + 19);
@@ -490,7 +477,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     g2.drawLine(x + 12, y + 3, x + 12, y + 6);
                     break;
 
-                default: // Plug
+                default:
                     g2.drawLine(x + 8, y + 2, x + 8, y + 7);
                     g2.drawLine(x + 14, y + 2, x + 14, y + 7);
                     g2.drawRoundRect(x + 5, y + 6, 12, 8, 3, 3);
@@ -502,10 +489,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         }
     }
 
-    /**
-     * Simple cat head drawn with Java2D for the header and empty-state panel.
-     * It is deliberately geometric so it renders consistently on every OS.
-     */
     private static final class CatIcon implements Icon {
         private final int size;
 
@@ -558,8 +541,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         }
     }
 
-    /** Mission tab rendered as a flat toggle card, so the mission bar always
-     *  matches the dark theme regardless of platform L&F quirks. */
     private static final class TabButton extends JButton {
         private boolean selected = false;
 
@@ -625,17 +606,17 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
         private final JPanel previewCards = new JPanel(previewCardLayout);
         private final JPanel contentGrid = new JPanel(new GridLayout(1, 3, 10, 10));
         private final JPanel controlsBar;
+        private final JPanel topBar = new JPanel(new BorderLayout(0, 6));
+        private final JPanel selectorBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 2));
         private final JButton playPauseBtn;
         private final JSlider speedSlider;
         private final JLabel stepLabel;
 
-        // Generic animation engine, reused by all four missions.
         private Timer animTimer;
         private Runnable animTick;
         private Runnable animReset;
         private BooleanSupplier animFinished;
 
-        // Mission 1 (BFS/DFS) animation state.
         private List<int[]> bfsOrder = Collections.emptyList();
         private List<int[]> dfsOrder = Collections.emptyList();
         private final int[] bfsReveal = {0};
@@ -655,8 +636,13 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             header.setIconTextGap(6);
             header.setForeground(ORANGE_SOFT);
             header.setFont(FONT_LABEL);
-            header.setBorder(new EmptyBorder(0, 0, 8, 0));
-            add(header, BorderLayout.NORTH);
+            header.setBorder(new EmptyBorder(0, 0, 0, 0));
+            selectorBar.setOpaque(false);
+            selectorBar.setVisible(false);
+            topBar.setOpaque(false);
+            topBar.add(header, BorderLayout.NORTH);
+            topBar.add(selectorBar, BorderLayout.SOUTH);
+            add(topBar, BorderLayout.NORTH);
 
             contentGrid.setOpaque(false);
 
@@ -672,16 +658,22 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             speedSlider = new JSlider(1, 5, 3);
             speedSlider.setOpaque(false);
             speedSlider.setPreferredSize(new Dimension(90, 20));
+
+            JLabel velLabel = new JLabel("Velocidad");
+            velLabel.setForeground(WHITE);
+            velLabel.setFont(FONT_SUBTITLE);
+
             stepLabel = new JLabel("");
-            stepLabel.setForeground(MUTED);
+            stepLabel.setForeground(WHITE);
             stepLabel.setFont(FONT_SUBTITLE);
 
             controlsBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
-            controlsBar.setOpaque(false);
-            controlsBar.setBorder(new EmptyBorder(8, 0, 0, 0));
+            controlsBar.setBackground(PANEL_LIGHT);
+            controlsBar.setOpaque(true);
+            controlsBar.setBorder(new EmptyBorder(6, 8, 6, 8));
             controlsBar.add(playPauseBtn);
             controlsBar.add(resetBtn);
-            controlsBar.add(new JLabel("Velocidad") {{ setForeground(MUTED); setFont(FONT_SUBTITLE); }});
+            controlsBar.add(velLabel);
             controlsBar.add(speedSlider);
             controlsBar.add(stepLabel);
             controlsBar.setVisible(false);
@@ -696,18 +688,62 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             });
         }
 
-        private JButton miniButton(String symbol) {
-            JButton button = new JButton(symbol);
+        private JButton miniButton(String text) {
+            JButton button = new JButton(text);
+            button.setFont(FONT_BTN);
             button.setFocusPainted(false);
-            button.setBackground(PANEL_LIGHT);
-            button.setForeground(WHITE);
-            button.setBorder(new LineBorder(CARD_BORDER, 1, true));
+            button.setContentAreaFilled(false); // Quita la caja blanca por defecto de Swing
+            button.setBorderPainted(false);
+            button.setOpaque(false);
+            button.setForeground(ORANGE_SOFT);
             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            button.setBorder(new EmptyBorder(6, 14, 6, 14));
+
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    button.repaint();
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    button.repaint();
+                }
+            });
+
+            // Dibujado personalizado con bordes redondeados y contraste oscuro
+            button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+                @Override
+                public void paint(Graphics g, JComponent c) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                    boolean hover = button.getModel().isRollover();
+                    RoundRectangle2D shape = new RoundRectangle2D.Double(0, 0, button.getWidth() - 1, button.getHeight() - 1, 8, 8);
+
+                    g2.setColor(hover ? PANEL_LIGHT : PANEL_DARK);
+                    g2.fill(shape);
+
+                    g2.setColor(ORANGE);
+                    g2.setStroke(new BasicStroke(1.2f));
+                    g2.draw(shape);
+
+                    g2.dispose();
+                    super.paint(g, c);
+                }
+            });
+
             return button;
         }
 
+        // Retardos en milisegundos incrementados para hacer las animaciones más lentas
+        // Modifica este método dentro de GraphPreviewPanel en MainFrame.java
         private int delayForSpeed(int speed) {
-            int[] delays = {500, 320, 200, 110, 50};
+            // Escala de retardos en milisegundos:
+            // Nivel 1: Muy pausado (3.0 segundos por paso)
+            // Nivel 3: Velocidad media (1.5 segundos por paso)
+            // Nivel 5: Moderado (0.6 segundos por paso)
+            int[] delays = {3000, 2200, 1500, 1000, 600};
             return delays[Math.max(1, Math.min(5, speed)) - 1];
         }
 
@@ -730,14 +766,14 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             animTick = null;
             animReset = null;
             animFinished = null;
+            selectorBar.removeAll();
+            selectorBar.setVisible(false);
             controlsBar.setVisible(false);
             contentGrid.removeAll();
             previewCardLayout.show(previewCards, "empty");
             previewCards.revalidate();
             previewCards.repaint();
         }
-
-        // ---- Mission 1: animated BFS / DFS exploration ------------------
 
         void showMission1(Grid grid, Punto inicio, Punto destino, List<Punto> bfsPath, List<Punto> dfsPath) {
             stopAnimation();
@@ -777,10 +813,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             BooleanSupplier finished = () -> bfsReveal[0] >= bfsOrder.size() && dfsReveal[0] >= dfsOrder.size();
             startAnimationEngine(tick, reset, finished);
         }
-
-        // ---- Generic animation engine (Timer + tick/reset/finished) --------
-        // Every mission supplies its own tick/reset/finished callbacks; the
-        // engine only owns the Timer and the play/pause/reset wiring.
 
         private void startAnimationEngine(Runnable tick, Runnable reset, BooleanSupplier finished) {
             stopAnimation();
@@ -825,10 +857,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             }
         }
 
-        /** Re-walks the grid the same way BFSDFSSolver.bfs does (unweighted,
-         *  4-directional), only to know the *order* cells were touched in,
-         *  purely for animation. The graded answer still comes from
-         *  BFSDFSSolver; this never overrides it. */
         private List<int[]> computeBfsVisitOrder(Grid grid, Punto inicio, Punto destino) {
             List<int[]> order = new ArrayList<>();
             if (grid.hayBomba(inicio.getFila(), inicio.getColumna())
@@ -861,8 +889,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             return order;
         }
 
-        /** Same idea as above but for DFS, using an explicit stack and the
-         *  neighbour order up, down, left, right required by the statement. */
         private List<int[]> computeDfsVisitOrder(Grid grid, Punto inicio, Punto destino) {
             List<int[]> order = new ArrayList<>();
             if (grid.hayBomba(inicio.getFila(), inicio.getColumna())
@@ -874,7 +900,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             boolean[][] visited = new boolean[rows][cols];
             Deque<int[]> stack = new ArrayDeque<>();
             stack.push(new int[]{inicio.getFila(), inicio.getColumna()});
-            // Pushed in reverse so pop order follows up, down, left, right.
             int[][] deltasReversed = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
             while (!stack.isEmpty()) {
@@ -966,10 +991,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             return canvas;
         }
 
-        // ---- Missions 2-4: static preview (animation pending model APIs) ---
-
-        // ---- Mission 2: animated Dijkstra node settling ------------------
-
         void showMission2(Graph graph, int origen, int destino, DijkstraResult result) {
             stopAnimation();
             contentGrid.removeAll();
@@ -999,11 +1020,62 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             BooleanSupplier finished = () -> reveal[0] >= settleOrder.size();
             startAnimationEngine(tick, reset, finished);
         }
+        public void showMission2Casos(List<MisionDosCaso> casos, List<DijkstraResult> resultados) {
+            if (casos == null || casos.isEmpty()) return;
+            if (resultados == null || resultados.size() != casos.size()) return;
 
-        /** Mirrors Dijkstra.resolver's priority-queue loop (same lazy-deletion
-         *  and early-cut rules) but only records the ORDER in which nodes are
-         *  finally settled, for the animation. The graded cost/path still
-         *  comes from Dijkstra.resolver via DijkstraResult. */
+            selectorBar.removeAll();
+            selectorBar.setLayout(new FlowLayout(FlowLayout.CENTER, 6, 2));
+            selectorBar.setOpaque(false);
+
+            for (int i = 0; i < casos.size(); i++) {
+                int index = i;
+                JButton btnCaso = miniButton("Caso #" + (i + 1));
+                btnCaso.addActionListener(e -> {
+                    MisionDosCaso casoSel = casos.get(index);
+                    DijkstraResult resSel = resultados.get(index);
+                    showMission2(casoSel.getGrafo(), casoSel.getOrigen(), casoSel.getDestino(), resSel);
+                });
+                selectorBar.add(btnCaso);
+            }
+
+            selectorBar.setVisible(true);
+            topBar.revalidate();
+            topBar.repaint();
+
+            MisionDosCaso primerCaso = casos.get(0);
+            DijkstraResult primerRes = resultados.get(0);
+            showMission2(primerCaso.getGrafo(), primerCaso.getOrigen(), primerCaso.getDestino(), primerRes);
+        }
+
+        public void showMission3Casos(List<MisionTresCaso> casos, List<Mission3Result> resultados) {
+            if (casos == null || casos.isEmpty()) return;
+            if (resultados == null || resultados.size() != casos.size()) return;
+
+            selectorBar.removeAll();
+            selectorBar.setLayout(new FlowLayout(FlowLayout.CENTER, 6, 2));
+            selectorBar.setOpaque(false);
+
+            for (int i = 0; i < casos.size(); i++) {
+                int index = i;
+                JButton btnCaso = miniButton("Caso #" + (i + 1));
+                btnCaso.addActionListener(e -> {
+                    MisionTresCaso casoSel = casos.get(index);
+                    Mission3Result resSel = resultados.get(index);
+                    showMission3(casoSel.getGrafo(), casoSel.getOrigen(), casoSel.getDestino(), resSel);
+                });
+                selectorBar.add(btnCaso);
+            }
+
+            selectorBar.setVisible(true);
+            topBar.revalidate();
+            topBar.repaint();
+
+            MisionTresCaso primerCaso = casos.get(0);
+            Mission3Result primerRes = resultados.get(0);
+            showMission3(primerCaso.getGrafo(), primerCaso.getOrigen(), primerCaso.getDestino(), primerRes);
+        }
+
         private List<Integer> computeDijkstraSettleOrder(Graph graph, int origen, int destino) {
             List<Integer> order = new ArrayList<>();
             int n = graph.getContadorNodos();
@@ -1051,20 +1123,43 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     boolean finished = reveal[0] >= order.size();
                     Set<Integer> settledSoFar = new HashSet<>(order.subList(0, Math.min(reveal[0], order.size())));
 
-                    Point[] points = circleLayout(n, getWidth(), getHeight());
+                    Point[] points = customGraphLayout(n, getWidth(), getHeight());
 
                     for (WeightedEdge edge : graph.getEdges()) {
                         int from = edge.getFrom();
                         int to = edge.getTo();
                         boolean onPath = finished && (pathEdges.contains(from + "->" + to) || pathEdges.contains(to + "->" + from));
-                        g2.setColor(onPath ? ORANGE : new Color(150, 150, 150));
-                        g2.setStroke(new BasicStroke(onPath ? 2.8f : 1.4f));
-                        g2.draw(new Line2D.Double(points[from].x, points[from].y, points[to].x, points[to].y));
+
+                        Point p1 = points[from];
+                        Point p2 = points[to];
+
+                        if (onPath) {
+                            g2.setColor(CAT_GREEN);
+                            g2.setStroke(new BasicStroke(2.8f));
+                        } else {
+                            g2.setColor(new Color(150, 150, 150));
+                            Stroke dashed = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{6.0f}, 0.0f);
+                            g2.setStroke(dashed);
+                        }
+                        g2.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
+
+                        // Weight label
+                        int midX = (p1.x + p2.x) / 2;
+                        int midY = (p1.y + p2.y) / 2;
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                        g2.drawString(String.valueOf(edge.getWeight()), midX + (p1.x == p2.x ? 8 : -10), midY);
+                    }
+
+                    if (graph.getEdges().isEmpty()) {
+                        g2.setColor(MUTED);
+                        g2.setFont(FONT_SUBTITLE);
+                        g2.drawString("no edges at all", getWidth() / 2 - 40, getHeight() / 2);
                     }
 
                     for (int i = 0; i < n; i++) {
                         Point p = points[i];
-                        Color color = new Color(230, 230, 230);
+                        Color color = new Color(70, 70, 70);
                         if (settledSoFar.contains(i)) {
                             color = new Color(90, 150, 210);
                         }
@@ -1073,10 +1168,28 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                         }
                         if (i == origen) color = CAT_GREEN;
                         if (i == destino) color = ORANGE;
+
                         g2.setColor(color);
-                        g2.fill(new Ellipse2D.Double(p.x - 12, p.y - 12, 24, 24));
-                        g2.setColor(CAT_BLACK);
-                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 4);
+                        g2.fill(new Ellipse2D.Double(p.x - 16, p.y - 16, 32, 32));
+                        g2.setColor(CARD_BORDER);
+                        g2.setStroke(new BasicStroke(1.5f));
+                        g2.draw(new Ellipse2D.Double(p.x - 16, p.y - 16, 32, 32));
+
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 5);
+
+                        // Labels start / dest
+                        if (i == origen) {
+                            g2.setColor(WHITE);
+                            g2.setFont(FONT_SUBTITLE);
+                            g2.drawString("start", p.x - 12, p.y - 20);
+                        }
+                        if (i == destino) {
+                            g2.setColor(WHITE);
+                            g2.setFont(FONT_SUBTITLE);
+                            g2.drawString("dest", p.x - 10, p.y + 32);
+                        }
                     }
                     g2.dispose();
                 }
@@ -1085,8 +1198,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             return canvas;
         }
 
-        /** Directed or undirected edge keys "a->b" for a node path, used to
-         *  highlight the edges an animated route actually walks. */
         private Set<String> consecutiveEdgeKeys(List<Integer> path, boolean directedOnly) {
             Set<String> keys = new HashSet<>();
             if (path == null) return keys;
@@ -1097,19 +1208,27 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             return keys;
         }
 
-        private Point[] circleLayout(int n, int width, int height) {
+        private Point[] customGraphLayout(int n, int width, int height) {
+            Point[] points = new Point[n];
             int cx = width / 2;
             int cy = height / 2;
-            int radius = Math.min(width, height) / 2 - 25;
-            Point[] points = new Point[n];
-            for (int i = 0; i < n; i++) {
-                double angle = Math.PI * 2 * i / n - Math.PI / 2;
-                points[i] = new Point((int) (cx + Math.cos(angle) * radius), (int) (cy + Math.sin(angle) * radius));
+
+            if (n == 2) {
+                points[0] = new Point(cx, cy - 60);
+                points[1] = new Point(cx, cy + 60);
+            } else if (n == 3) {
+                points[2] = new Point(cx, cy - 70);
+                points[1] = new Point(cx - 65, cy + 45);
+                points[0] = new Point(cx + 65, cy + 45);
+            } else {
+                int radius = Math.min(width, height) / 2 - 35;
+                for (int i = 0; i < n; i++) {
+                    double angle = Math.PI * 2 * i / n - Math.PI / 2;
+                    points[i] = new Point((int) (cx + Math.cos(angle) * radius), (int) (cy + Math.sin(angle) * radius));
+                }
             }
             return points;
         }
-
-        // ---- Mission 3: animated Bellman-Ford relaxation rounds ----------
 
         void showMission3(Graph graph, int origen, int destino, Mission3Result result) {
             stopAnimation();
@@ -1131,6 +1250,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     if (noAcotado[i]) finalNodes.add(i);
                 }
             }
+
 
             contentGrid.add(createGraphCard("Grafo", graph, Collections.emptySet(), Collections.emptySet(), origen, destino));
             JComponent canvas = animatedBellmanFordCanvas(graph, origen, destino, trace, round, finalNodes, finalEdges,
@@ -1160,12 +1280,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             int[] previo;
         }
 
-        /** Re-runs the same maximizing relaxation loop as BellmanFord.resolver
-         *  (same NO_ROUTE guard, same "no improvement -> stop" early cut), but
-         *  also records which edges improved in each round (for the animation)
-         *  and a predecessor array (only used to draw the final route). The
-         *  authoritative value/mismatch/infinite verdict always comes from
-         *  Mission3Solver's Mission3Result, never from this trace. */
         private BfTrace computeBellmanFordTrace(Graph grafo, int origen) {
             int n = grafo.getContadorNodos();
             long[] dist = new long[n];
@@ -1240,29 +1354,51 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                         }
                     }
 
-                    Point[] points = circleLayout(n, getWidth(), getHeight());
-                    Color finalColor = infinite ? new Color(200, 90, 60) : ORANGE;
+                    Point[] points = customGraphLayout(n, getWidth(), getHeight());
+                    Color finalColor = infinite ? new Color(200, 90, 60) : CAT_GREEN;
 
                     for (WeightedEdge edge : graph.getEdges()) {
                         String key = edge.getFrom() + "->" + edge.getTo();
                         boolean isFinal = finished && finalEdges.contains(key);
                         boolean isActive = !finished && activeEdges.contains(key);
+
                         g2.setColor(isFinal ? finalColor : isActive ? ORANGE_SOFT : new Color(150, 150, 150));
                         g2.setStroke(new BasicStroke(isFinal || isActive ? 2.6f : 1.2f));
                         drawDirectedEdge(g2, points[edge.getFrom()], points[edge.getTo()]);
+
+                        Point p1 = points[edge.getFrom()];
+                        Point p2 = points[edge.getTo()];
+                        int midX = (p1.x + p2.x) / 2;
+                        int midY = (p1.y + p2.y) / 2;
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                        g2.drawString(String.valueOf(edge.getWeight()), midX, midY);
                     }
 
                     for (int i = 0; i < n; i++) {
                         Point p = points[i];
-                        Color color = new Color(230, 230, 230);
+                        Color color = new Color(70, 70, 70);
                         if (reachedNodes.contains(i)) color = new Color(90, 150, 210);
                         if (finished && finalNodes.contains(i)) color = finalColor;
                         if (i == origen) color = CAT_GREEN;
                         if (i == destino) color = ORANGE;
+
                         g2.setColor(color);
-                        g2.fill(new Ellipse2D.Double(p.x - 12, p.y - 12, 24, 24));
-                        g2.setColor(CAT_BLACK);
-                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 4);
+                        g2.fill(new Ellipse2D.Double(p.x - 16, p.y - 16, 32, 32));
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 5);
+
+                        if (i == origen) {
+                            g2.setColor(WHITE);
+                            g2.setFont(FONT_SUBTITLE);
+                            g2.drawString("start", p.x - 12, p.y - 20);
+                        }
+                        if (i == destino) {
+                            g2.setColor(WHITE);
+                            g2.setFont(FONT_SUBTITLE);
+                            g2.drawString("dest", p.x - 10, p.y + 32);
+                        }
                     }
                     g2.dispose();
                 }
@@ -1271,23 +1407,18 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             return canvas;
         }
 
-        /** Draws a directed edge with a small arrowhead near the destination
-         *  node, since Mission 3's graph is directed and a plain line reads
-         *  as undirected like Missions 2 and 4. */
         private void drawDirectedEdge(Graphics2D g2, Point from, Point to) {
             g2.draw(new Line2D.Double(from.x, from.y, to.x, to.y));
             double angle = Math.atan2(to.y - from.y, to.x - from.x);
-            double arrowX = to.x - 16 * Math.cos(angle);
-            double arrowY = to.y - 16 * Math.sin(angle);
-            int len = 7;
+            double arrowX = to.x - 18 * Math.cos(angle);
+            double arrowY = to.y - 18 * Math.sin(angle);
+            int len = 8;
             int x1 = (int) (arrowX - len * Math.cos(angle - Math.PI / 7));
             int y1 = (int) (arrowY - len * Math.sin(angle - Math.PI / 7));
             int x2 = (int) (arrowX - len * Math.cos(angle + Math.PI / 7));
             int y2 = (int) (arrowY - len * Math.sin(angle + Math.PI / 7));
             g2.fillPolygon(new int[]{(int) arrowX, x1, x2}, new int[]{(int) arrowY, y1, y2}, 3);
         }
-
-        // ---- Mission 4: animated Kruskal edge-by-edge decisions ----------
 
         void showMission4(Graph graph, Kruskal.Resultado resultado) throws ENumeroNegativo {
             stopAnimation();
@@ -1330,11 +1461,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             }
         }
 
-        /** Reuses the real Union-Find (algorithms.mission4.Union) and the same
-         *  sort + early-cut rule as Kruskal.ejecutar, so the accept/reject
-         *  decision animated here is guaranteed to match the graded result -
-         *  it is not a re-implementation of the greedy criterion, only a
-         *  step-by-step trace of it. */
         private List<KruskalStep> computeKruskalSteps(Graph grafo) throws ENumeroNegativo {
             List<WeightedEdge> cables = new ArrayList<>(grafo.getEdges());
             Collections.sort(cables);
@@ -1370,7 +1496,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                     WeightedEdge current = reveal[0] > 0 && reveal[0] <= steps.size()
                             ? steps.get(reveal[0] - 1).edge : null;
 
-                    Point[] points = circleLayout(n, getWidth(), getHeight());
+                    Point[] points = customGraphLayout(n, getWidth(), getHeight());
 
                     for (WeightedEdge edge : graph.getEdges()) {
                         Boolean decision = decisions.get(edge);
@@ -1381,7 +1507,7 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                             g2.setColor(new Color(120, 120, 120));
                             g2.setStroke(new BasicStroke(1.2f));
                         } else if (decision) {
-                            g2.setColor(ORANGE);
+                            g2.setColor(CAT_GREEN);
                             g2.setStroke(new BasicStroke(2.8f));
                         } else {
                             g2.setColor(new Color(160, 70, 70));
@@ -1393,14 +1519,23 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                         }
                         g2.draw(new Line2D.Double(points[edge.getFrom()].x, points[edge.getFrom()].y,
                                 points[edge.getTo()].x, points[edge.getTo()].y));
+
+                        Point p1 = points[edge.getFrom()];
+                        Point p2 = points[edge.getTo()];
+                        int midX = (p1.x + p2.x) / 2;
+                        int midY = (p1.y + p2.y) / 2;
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                        g2.drawString(String.valueOf(edge.getWeight()), midX, midY);
                     }
 
                     for (int i = 0; i < n; i++) {
                         Point p = points[i];
-                        g2.setColor(new Color(230, 230, 230));
-                        g2.fill(new Ellipse2D.Double(p.x - 12, p.y - 12, 24, 24));
-                        g2.setColor(CAT_BLACK);
-                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 4);
+                        g2.setColor(new Color(70, 70, 70));
+                        g2.fill(new Ellipse2D.Double(p.x - 16, p.y - 16, 32, 32));
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 5);
                     }
                     g2.dispose();
                 }
@@ -1496,36 +1631,62 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
                         return;
                     }
 
-                    int cx = getWidth() / 2;
-                    int cy = getHeight() / 2;
-                    int radius = Math.min(getWidth(), getHeight()) / 2 - 25;
-                    Point[] points = new Point[n];
-                    for (int i = 0; i < n; i++) {
-                        double angle = Math.PI * 2 * i / n - Math.PI / 2;
-                        int x = (int) (cx + Math.cos(angle) * radius);
-                        int y = (int) (cy + Math.sin(angle) * radius);
-                        points[i] = new Point(x, y);
-                    }
+                    Point[] points = customGraphLayout(n, getWidth(), getHeight());
 
                     for (WeightedEdge edge : graph.getEdges()) {
                         int from = edge.getFrom();
                         int to = edge.getTo();
                         boolean highlight = highlightedEdges.contains(from + "->" + to)
                                 || highlightedEdges.contains(to + "->" + from);
-                        g2.setColor(highlight ? ORANGE : new Color(150, 150, 150));
-                        g2.setStroke(new BasicStroke(highlight ? 2.8f : 1.4f));
-                        g2.draw(new Line2D.Double(points[from].x, points[from].y, points[to].x, points[to].y));
+
+                        Point p1 = points[from];
+                        Point p2 = points[to];
+
+                        if (highlight) {
+                            g2.setColor(CAT_GREEN);
+                            g2.setStroke(new BasicStroke(2.8f));
+                        } else {
+                            g2.setColor(new Color(150, 150, 150));
+                            Stroke dashed = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{6.0f}, 0.0f);
+                            g2.setStroke(dashed);
+                        }
+                        g2.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
+
+                        int midX = (p1.x + p2.x) / 2;
+                        int midY = (p1.y + p2.y) / 2;
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                        g2.drawString(String.valueOf(edge.getWeight()), midX, midY);
+                    }
+
+                    if (graph.getEdges().isEmpty()) {
+                        g2.setColor(MUTED);
+                        g2.setFont(FONT_SUBTITLE);
+                        g2.drawString("no edges at all", getWidth() / 2 - 40, getHeight() / 2);
                     }
 
                     for (int i = 0; i < n; i++) {
                         Point p = points[i];
-                        g2.setColor(highlightedNodes.contains(i) ? ORANGE_SOFT : new Color(230, 230, 230));
+                        g2.setColor(highlightedNodes.contains(i) ? ORANGE_SOFT : new Color(70, 70, 70));
                         if (i == origen || i == destino) {
                             g2.setColor(i == origen ? CAT_GREEN : ORANGE);
                         }
-                        g2.fill(new Ellipse2D.Double(p.x - 12, p.y - 12, 24, 24));
-                        g2.setColor(CAT_BLACK);
-                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 4);
+
+                        g2.fill(new Ellipse2D.Double(p.x - 16, p.y - 16, 32, 32));
+                        g2.setColor(WHITE);
+                        g2.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                        g2.drawString(String.valueOf(i), p.x - 4, p.y + 5);
+
+                        if (i == origen && origen >= 0) {
+                            g2.setColor(WHITE);
+                            g2.setFont(FONT_SUBTITLE);
+                            g2.drawString("start", p.x - 12, p.y - 20);
+                        }
+                        if (i == destino && destino >= 0) {
+                            g2.setColor(WHITE);
+                            g2.setFont(FONT_SUBTITLE);
+                            g2.drawString("dest", p.x - 10, p.y + 32);
+                        }
                     }
                     g2.dispose();
                 }
@@ -1549,16 +1710,6 @@ import static com.sun.tools.javac.jvm.PoolConstant.LoadableConstant.Int;
             if (edges != null) {
                 for (WeightedEdge edge : edges) {
                     set.add(edge.getFrom() + "->" + edge.getTo());
-                }
-            }
-            return set;
-        }
-
-        private Set<Integer> setOf(int... values) {
-            Set<Integer> set = new HashSet<>();
-            for (int value : values) {
-                if (value >= 0) {
-                    set.add(value);
                 }
             }
             return set;
